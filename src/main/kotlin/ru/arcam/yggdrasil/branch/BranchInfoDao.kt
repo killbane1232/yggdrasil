@@ -1,15 +1,15 @@
 package ru.arcam.yggdrasil.branch
 
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+//import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+//import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
 class BranchInfoDao(
-    val jdbcTemplate: NamedParameterJdbcTemplate
+//    val jdbcTemplate: NamedParameterJdbcTemplate
 ) {
 
-    fun createBranch(branchInfo: BranchInfo) {
+/*    fun createBranch(branchInfo: BranchInfo) {
         jdbcTemplate.update(
             "INSERT INTO branch_info (service_name) VALUES (:service_name) ",
             MapSqlParameterSource("service_name", branchInfo.serviceName)
@@ -29,5 +29,5 @@ class BranchInfoDao(
             "DELETE FROM branch_info WHERE service_name = :service_name",
             MapSqlParameterSource("service_name", serviceName)
         )
-    }
+    }*/
 }

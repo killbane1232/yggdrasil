@@ -3,7 +3,7 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24'
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
-	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.24'
+//	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.24'
 	id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
 }
 group = 'ru.arcam'
@@ -28,9 +28,9 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -47,7 +47,7 @@ dependencies {
 	implementation("org.telegram:telegrambots-abilities:$telegramBotVersion")
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
+//	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
@@ -68,4 +68,23 @@ allOpen {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('fatJar', Jar) {
+	manifest.from jar.manifest
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	from {
+		configurations.runtimeClasspath.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	with jar
+}
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'ru.arcam.yggdrasil.YggdrasilApplication'
+		)
+	}
 }
