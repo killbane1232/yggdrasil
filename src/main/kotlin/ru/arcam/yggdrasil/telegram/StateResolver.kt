@@ -34,13 +34,6 @@ class StateResolver {
         return menuData[chatId]!!.peek().getMenu()
     }
 
-    @Synchronized
-    fun push(chatId: Long, menu: CarouselMenu) {
-        if (!menuData.containsKey(chatId))
-            menuData[chatId] = Stack()
-        menuData[chatId]!!.push(menu)
-    }
-
     companion object {
         val resolver = StateResolver()
     }

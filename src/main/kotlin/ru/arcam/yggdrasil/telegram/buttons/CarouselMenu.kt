@@ -1,11 +1,8 @@
 package ru.arcam.yggdrasil.telegram.buttons
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import ru.arcam.yggdrasil.telegram.StateResolver
-import ru.arcam.yggdrasil.telegram.TelegramBot
 import ru.arcam.yggdrasil.telegram.TelegramSendable
 
 abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var method: String = "") {
@@ -16,13 +13,11 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var me
     private val NONE = "NONE"
     private val NEXT = "NEXT"
     private val PREVIOUS = "PREVIOUS"
-    val isInit: Boolean
-        get() = buttons.isNotEmpty()
 
 
     open fun getMenu(): InlineKeyboardMarkup {
         val builder = InlineKeyboardMarkup.builder()
-        maxPages = 1 + buttons.size / MAX_SIZE
+        maxPages = buttons.size / MAX_SIZE + if (buttons.size % MAX_SIZE > 0) 1 else 0
         val buttonIdx = (idx - 1) * MAX_SIZE
         var i = 0
         while (i < MAX_SIZE && i + buttonIdx < buttons.size) {

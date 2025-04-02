@@ -74,7 +74,7 @@ class TelegramBot(
         val message = SendMessage()
         message.chatId = chatId.toString()
         val menu = MenuSelector(chatId, MenuButton.entries.map{ it.button })
-        resolver.push(chatId, menu)
+        resolver.notifyUpdateMenu(chatId, menu)
         message.replyMarkup = menu.getMenu()
         message.text = "Select method"
 

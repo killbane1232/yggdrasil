@@ -28,7 +28,7 @@ class RequestBuffer {
         val now = LocalDateTime.now()
         requestTimestamps.forEach { (requestId, timestamp) ->
             if (now.minusMinutes(timeoutMinutes).isAfter(timestamp)) {
-                requests[requestId]?.completeExceptionally(Exception("Request timeout"))
+                requests[requestId]?.complete("Request timeout")
                 requests.remove(requestId)
                 requestTimestamps.remove(requestId)
             }
