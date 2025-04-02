@@ -70,21 +70,16 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.register('fatJar', Jar) {
-	manifest.from jar.manifest
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'ru.arcam.yggdrasil.YggdrasilApplicationKt'
+		)
+	}
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	from {
 		configurations.runtimeClasspath.collect {
 			it.isDirectory() ? it : zipTree(it)
 		}
-	}
-	with jar
-}
-
-jar {
-	manifest {
-		attributes(
-				'Main-Class': 'ru.arcam.yggdrasil.YggdrasilApplication'
-		)
 	}
 }
