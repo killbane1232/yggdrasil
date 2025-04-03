@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramSendable
 
-abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>) {
+abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, val text: String = "Menu") {
     var resolver = StateResolver.resolver
     val MAX_SIZE = 5
     var idx = 1
@@ -13,7 +13,6 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>) {
     private val NONE = "NONE"
     private val NEXT = "NEXT"
     private val PREVIOUS = "PREVIOUS"
-
 
     open fun getMenu(): InlineKeyboardMarkup {
         val builder = InlineKeyboardMarkup.builder()
@@ -42,7 +41,7 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>) {
     open fun onClick(callbackData: String): TelegramSendable? {
         if (callbackData == NONE) {
             previousLevel()
-            return TelegramSendable(resolver.peekMenu(chatId), null)
+            return null
         }
         when (callbackData) {
             NEXT -> idx = (idx) % maxPages + 1

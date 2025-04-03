@@ -8,7 +8,7 @@ import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafButtonView
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 
-class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList()) {
+class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList(), "Select server") {
     var branches = HashMap<String, BranchInfo>()
     var leaves = HashMap<String, Leaf>()
 

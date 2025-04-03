@@ -1,22 +1,18 @@
 package ru.arcam.yggdrasil.telegram
 
 import jakarta.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Autowired
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
-import ru.arcam.yggdrasil.ws.WebSocketService
 
 
 @Component
@@ -24,6 +20,7 @@ class TelegramBot(
     private var tgBotConfig: TelegramConfiguration
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
+    val logger = LoggerFactory.getLogger(TelegramBot::class.java)
 
 
     @PostConstruct
@@ -40,22 +37,23 @@ class TelegramBot(
         if (update!!.hasCallbackQuery()) {
             val chatId = update.callbackQuery.message.chatId
             val result = resolver.peekOnClick(chatId, update.callbackQuery.data)
-            if (result == null)
-                sendKeyBoard(chatId, resolver.peekMenu(chatId))
-            else
-                if (result.sendableObject != null)
-                    sendKeyBoard(chatId, result.sendableObject as InlineKeyboardMarkup)
-                else {
-                    sendMessage(chatId, result.sendableMethod!!.text)
-                    val lastMessage = resolver.lastMenuId[chatId]
-                    try {
-                        if (lastMessage != null) {
-                            val deleter = DeleteMessage(chatId.toString(), lastMessage)
-                            execute(deleter)
-                        }
-                    } catch(_: Throwable) {}
-                    sendKeyBoard(chatId, resolver.peekMenu(chatId))
-                }
+            if (result == null) {
+                sendKeyBoard(chatId)
+                return
+            }
+            if (result.sendableObject != null)
+                sendKeyBoard(chatId, result.sendableObject as InlineKeyboardMarkup)
+            else {
+                sendMessage(chatId, result.sendableMethod!!.text)
+                val lastMessage = resolver.lastMenuId[chatId]
+                try {
+                    if (lastMessage != null) {
+                        val deleter = DeleteMessage(chatId.toString(), lastMessage)
+                        execute(deleter)
+                    }
+                } catch(_: Throwable) {}
+                sendKeyBoard(chatId)
+            }
         }
         if (update.hasMessage() && update.message.hasText()) {
             val chatId = update.message.chatId
@@ -86,7 +84,7 @@ class TelegramBot(
         val menu = BranchSelector(chatId)
         resolver.notifyUpdateMenu(chatId, menu)
         message.replyMarkup = menu.getMenu()
-        message.text = "Select method"
+        message.text = menu.text
 
         try {
             val result = execute(message)
@@ -96,15 +94,16 @@ class TelegramBot(
         }
     }
 
-    fun sendKeyBoard(chatId: Long, keyboard: InlineKeyboardMarkup) {
+    fun sendKeyBoard(chatId: Long, keyboard: InlineKeyboardMarkup = resolver.peekMenu(chatId)) {
         val lastMessage = resolver.lastMenuId[chatId]
         var flag = lastMessage == null;
         try {
             if (!flag) {
-                val deleter = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
-                execute(deleter)
+                val editor = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
+                execute(editor)
             }
-        } catch(_: Throwable) {
+        } catch(ex: Throwable) {
+            ex.printStackTrace()
             flag = true
         }
         if (flag) {
