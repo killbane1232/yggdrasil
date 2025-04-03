@@ -40,7 +40,7 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var me
     open fun onClick(callbackData: String): TelegramSendable? {
         if (callbackData == NONE) {
             previousLevel()
-            return TelegramSendable(getMenu(), null)
+            return TelegramSendable(resolver.peekMenu(chatId), null)
         }
         when (callbackData) {
             NEXT -> idx = (idx + 1) % maxPages + 1

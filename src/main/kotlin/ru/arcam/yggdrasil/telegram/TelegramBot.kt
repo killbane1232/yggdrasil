@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
@@ -88,20 +89,26 @@ class TelegramBot(
 
     fun sendKeyBoard(chatId: Long, keyboard: InlineKeyboardMarkup) {
         val lastMessage = resolver.lastMenuId[chatId]
-        if (lastMessage != null)
-            try {
-                val deleter = DeleteMessage(chatId.toString(), lastMessage)
-                execute(deleter)
-            } catch(_: Throwable) { }
-        val message = SendMessage()
-        message.chatId = chatId.toString()
-        message.replyMarkup = keyboard
-        message.text = "Select"
+        var flag = false;
         try {
-            val result = execute(message)
-            resolver.lastMenuId[chatId] = result.messageId
-        } catch (e: TelegramApiException) {
-            e.printStackTrace()
+            if (lastMessage != null) {
+                val deleter = EditMessageReplyMarkup(chatId.toString(), lastMessage, lastMessage.toString(), keyboard)
+                execute(deleter)
+            }
+        } catch(_: Throwable) {
+            flag = true
+        }
+        if (flag) {
+            val message = SendMessage()
+            message.chatId = chatId.toString()
+            message.replyMarkup = keyboard
+            message.text = "Select"
+            try {
+                val result = execute(message)
+                resolver.lastMenuId[chatId] = result.messageId
+            } catch (e: TelegramApiException) {
+                e.printStackTrace()
+            }
         }
     }
 }
