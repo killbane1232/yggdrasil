@@ -4,15 +4,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import ru.arcam.yggdrasil.telegram.TelegramSendable
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
-import ru.arcam.yggdrasil.telegram.buttons.method.MethodSelector
 import ru.arcam.yggdrasil.ws.WebSocketService
+import java.util.*
 
 class MenuButtonView(text: String = ""): Button(text) {
-    var wsService = WebSocketService.wsService
+    private var wsService = WebSocketService.wsService
 
     override fun onClick(menu: CarouselMenu) : TelegramSendable? {
         val leaf = (menu as MenuSelector).leaf
-        when(MenuButton.valueOf(text)) {
+        when(MenuButton.valueOf(text.uppercase(Locale.getDefault()))) {
             MenuButton.STATUS -> {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()
