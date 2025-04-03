@@ -92,7 +92,7 @@ class TelegramBot(
         var flag = false;
         try {
             if (lastMessage != null) {
-                val deleter = EditMessageReplyMarkup(chatId.toString(), lastMessage, lastMessage.toString(), keyboard)
+                val deleter = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
                 execute(deleter)
             }
         } catch(_: Throwable) {
