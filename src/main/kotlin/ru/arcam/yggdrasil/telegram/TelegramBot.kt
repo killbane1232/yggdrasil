@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -46,6 +47,13 @@ class TelegramBot(
                     sendKeyBoard(chatId, result.sendableObject as InlineKeyboardMarkup)
                 else {
                     sendMessage(chatId, result.sendableMethod!!.text)
+                    val lastMessage = resolver.lastMenuId[chatId]
+                    try {
+                        if (lastMessage != null) {
+                            val deleter = DeleteMessage(chatId.toString(), lastMessage)
+                            execute(deleter)
+                        }
+                    } catch(_: Throwable) {}
                     sendKeyBoard(chatId, resolver.peekMenu(chatId))
                 }
         }
@@ -90,9 +98,9 @@ class TelegramBot(
 
     fun sendKeyBoard(chatId: Long, keyboard: InlineKeyboardMarkup) {
         val lastMessage = resolver.lastMenuId[chatId]
-        var flag = false;
+        var flag = lastMessage == null;
         try {
-            if (lastMessage != null) {
+            if (!flag) {
                 val deleter = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
                 execute(deleter)
             }
