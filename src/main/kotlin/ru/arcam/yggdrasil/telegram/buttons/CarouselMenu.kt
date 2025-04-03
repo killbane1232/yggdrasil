@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramSendable
 
-abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var method: String = "") {
+abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>) {
     var resolver = StateResolver.resolver
     val MAX_SIZE = 5
     var idx = 1
@@ -18,12 +18,14 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var me
     open fun getMenu(): InlineKeyboardMarkup {
         val builder = InlineKeyboardMarkup.builder()
         maxPages = buttons.size / MAX_SIZE + if (buttons.size % MAX_SIZE > 0) 1 else 0
+        if (maxPages == 0)
+            maxPages = 1
         val buttonIdx = (idx - 1) * MAX_SIZE
         var i = 0
         while (i < MAX_SIZE && i + buttonIdx < buttons.size) {
             builder.keyboardRow(listOf(InlineKeyboardButton.builder()
                 .text(buttons[i + buttonIdx].text)
-                .callbackData("${buttons[i + buttonIdx].text}.${method}")
+                .callbackData(buttons[i + buttonIdx].text)
                 .build()))
             i++
         }
@@ -45,14 +47,11 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, var me
         when (callbackData) {
             NEXT -> idx = (idx + 1) % maxPages + 1
             PREVIOUS -> idx = (idx - 1 + maxPages) % maxPages + 1
-            else -> if (callbackData.endsWith(method)) {
-                val name = callbackData.substring(0, callbackData.lastIndexOf(method) - 1)
-                for (button in buttons) {
-                    if (button.text == name) {
-                        return button.onClick(this)
+            else -> for (button in buttons) {
+                        if (button.text == callbackData) {
+                            return button.onClick(this)
+                        }
                     }
-                }
-            }
         }
         return TelegramSendable(getMenu(), null)
     }

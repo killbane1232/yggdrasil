@@ -12,7 +12,7 @@ class MenuButtonView(text: String = ""): Button(text) {
 
     override fun onClick(menu: CarouselMenu) : TelegramSendable? {
         val leaf = (menu as MenuSelector).leaf
-        when(MenuButton.valueOf(menu.method)) {
+        when(MenuButton.valueOf(text)) {
             MenuButton.STATUS -> {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()

@@ -11,7 +11,7 @@ class BranchController {
     @MessageMapping("/assing")
     fun processMessage(@Payload branchInfo: BranchInfo?) {
         branchStorage.storage[branchInfo!!.serviceName] = branchInfo
-        branchStorage.storageCleaner[branchInfo!!.serviceName] = LocalDateTime.now()
+        branchStorage.storageCleaner[branchInfo.serviceName] = LocalDateTime.now()
     }
 
     @Scheduled(fixedRate = 10000)

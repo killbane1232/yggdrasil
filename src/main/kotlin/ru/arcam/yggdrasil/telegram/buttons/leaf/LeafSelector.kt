@@ -6,8 +6,8 @@ import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
 
-class LeafSelector(chatId: Long, val leaves: HashMap<String, Leaf> = HashMap(), method: String = "") :
-    CarouselMenu(chatId, buttons = leaves.map { LeafButtonView(it.value) }, method) {
+class LeafSelector(chatId: Long, val leaves: HashMap<String, Leaf> = HashMap()) :
+    CarouselMenu(chatId, buttons = leaves.map { LeafButtonView(it.value) }) {
     override fun nextLevel(key: String) {
         val leaf = leaves.values.first{x -> x.name == key}
         resolver.notifyUpdateMenu(chatId, MenuSelector(chatId, leaf, MenuButton.entries.map{ it.button }))
