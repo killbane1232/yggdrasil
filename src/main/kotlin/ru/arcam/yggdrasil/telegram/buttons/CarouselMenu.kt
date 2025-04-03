@@ -44,8 +44,16 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, val te
             return null
         }
         when (callbackData) {
-            NEXT -> idx = (idx) % maxPages + 1
-            PREVIOUS -> idx = (idx - 2 + maxPages) % maxPages + 1
+            NEXT -> {
+                val now = idx
+                idx = (idx) % maxPages + 1
+                resolver.lastMenuChanged[chatId] = idx != now
+            }
+            PREVIOUS -> {
+                val now = idx
+                idx = (idx - 2 + maxPages) % maxPages + 1
+                resolver.lastMenuChanged[chatId] = idx != now
+            }
             else -> for (button in buttons) {
                         if (button.text == callbackData) {
                             return button.onClick(this)
