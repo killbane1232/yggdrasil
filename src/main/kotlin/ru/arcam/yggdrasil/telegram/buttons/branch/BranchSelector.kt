@@ -9,7 +9,7 @@ import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafButtonView
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 
-class BranchSelector(chatId: Long, val type: MenuButton): CarouselMenu(chatId, ArrayList(), method = type.name) {
+class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList()) {
     var branches = HashMap<String, BranchInfo>()
     var leaves = HashMap<String, Leaf>()
 
@@ -28,6 +28,6 @@ class BranchSelector(chatId: Long, val type: MenuButton): CarouselMenu(chatId, A
             leaves[leaf.name] = leaf
             buttons.plus(LeafButtonView(leaf))
         }
-        resolver.notifyUpdateMenu(chatId, LeafSelector(chatId, type, leaves, method))
+        resolver.notifyUpdateMenu(chatId, LeafSelector(chatId, leaves, method))
     }
 }

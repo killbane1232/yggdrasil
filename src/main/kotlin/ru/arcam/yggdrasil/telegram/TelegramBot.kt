@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
+import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 import ru.arcam.yggdrasil.ws.WebSocketService
@@ -74,7 +75,7 @@ class TelegramBot(
     fun sendMenu(chatId: Long) {
         val message = SendMessage()
         message.chatId = chatId.toString()
-        val menu = MenuSelector(chatId, MenuButton.entries.map{ it.button })
+        val menu = BranchSelector(chatId)
         resolver.notifyUpdateMenu(chatId, menu)
         message.replyMarkup = menu.getMenu()
         message.text = "Select method"

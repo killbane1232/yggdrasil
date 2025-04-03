@@ -20,7 +20,7 @@ class StateResolver {
 
     @Synchronized
     fun goBack(chatId: Long) {
-        if (menuData.containsKey(chatId) && menuData[chatId]!!.isNotEmpty())
+        if (menuData.containsKey(chatId) && menuData[chatId]!!.size > 1)
             menuData[chatId]!!.pop()
     }
 
