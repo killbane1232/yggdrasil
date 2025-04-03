@@ -10,9 +10,7 @@ class TelegramConfiguration {
     private var properties: Properties = Properties()
     
     init {
-        val jarPath = TelegramConfiguration::class.java.protectionDomain.codeSource.location.toURI().path
-        val jarDir = File(jarPath).parentFile
-        val configFile = File(jarDir, "telegram.config")
+        val configFile = File("telegram.config")
         if (configFile.exists()) {
             properties.load(configFile.inputStream())
         }
