@@ -101,6 +101,7 @@ class TelegramBot(
             if (!flag && resolver.lastMenuChanged.getOrDefault(chatId, false)) {
                 val editor = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
                 execute(editor)
+                resolver.lastMenuChanged[chatId] = false
             }
         } catch(ex: Throwable) {
             ex.printStackTrace()
