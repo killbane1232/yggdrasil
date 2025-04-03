@@ -8,7 +8,7 @@ import kotlin.collections.HashMap
 
 @Component
 class StateResolver {
-    private val menuData: HashMap<Long, Stack<CarouselMenu>> = HashMap()
+    val menuData: HashMap<Long, Stack<CarouselMenu>> = HashMap()
     val lastMenuId: HashMap<Long, Int> = HashMap()
     val lastMenuChanged: HashMap<Long, Boolean> = HashMap()
 

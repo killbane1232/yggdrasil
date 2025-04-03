@@ -111,7 +111,7 @@ class TelegramBot(
             val message = SendMessage()
             message.chatId = chatId.toString()
             message.replyMarkup = keyboard
-            message.text = "Select"
+            message.text = resolver.menuData[chatId]!!.peek().text
             try {
                 val result = execute(message)
                 resolver.lastMenuId[chatId] = result.messageId
