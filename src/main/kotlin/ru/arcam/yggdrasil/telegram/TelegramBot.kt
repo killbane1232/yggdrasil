@@ -82,7 +82,7 @@ class TelegramBot(
         message.chatId = chatId.toString()
         val menu = BranchSelector(chatId)
         resolver.notifyUpdateMenu(chatId, menu)
-        message.replyMarkup = menu.getMenu()
+        message.replyMarkup = menu.getMenu().build()
         message.text = menu.text
 
         try {
