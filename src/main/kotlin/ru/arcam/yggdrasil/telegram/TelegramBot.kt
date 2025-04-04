@@ -8,10 +8,12 @@ import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
+import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 
 
@@ -41,19 +43,16 @@ class TelegramBot(
                 sendKeyBoard(chatId)
                 return
             }
-            if (result.sendableObject != null)
-                sendKeyBoard(chatId, result.sendableObject as InlineKeyboardMarkup)
-            else {
-                sendMessage(chatId, result.sendableMethod!!.text)
-                val lastMessage = resolver.lastMenuId[chatId]
-                try {
-                    if (lastMessage != null) {
-                        val deleter = DeleteMessage(chatId.toString(), lastMessage)
-                        execute(deleter)
-                    }
-                } catch(_: Throwable) {}
-                sendKeyBoard(chatId)
-            }
+            sendMessage(chatId, result.sendableMethod!!.text)
+            val lastMessage = resolver.lastMenuId[chatId]
+            try {
+                if (lastMessage != null) {
+                    val deleter = DeleteMessage(chatId.toString(), lastMessage)
+                    execute(deleter)
+                    resolver.lastMenuChanged[chatId] = true
+                }
+            } catch(_: Throwable) {}
+            sendKeyBoard(chatId)
         }
         if (update.hasMessage() && update.message.hasText()) {
             val chatId = update.message.chatId
@@ -94,13 +93,21 @@ class TelegramBot(
         }
     }
 
-    fun sendKeyBoard(chatId: Long, keyboard: InlineKeyboardMarkup = resolver.peekMenu(chatId)) {
+    fun sendKeyBoard(chatId: Long, keyboard: KeyboardBuilder = resolver.peekMenu(chatId)) {
         val lastMessage = resolver.lastMenuId[chatId]
         var flag = lastMessage == null;
         try {
             if (!flag && resolver.lastMenuChanged.getOrDefault(chatId, false)) {
-                val editor = EditMessageReplyMarkup(chatId.toString(), lastMessage, null, keyboard)
-                execute(editor)
+                val textEditor = EditMessageText(chatId.toString(),
+                    lastMessage,
+                    null,
+                    keyboard.text,
+                    null,
+                    null,
+                    keyboard.build(),
+                    null,
+                    null)
+                execute(textEditor)
                 resolver.lastMenuChanged[chatId] = false
             }
         } catch(ex: Throwable) {
@@ -110,8 +117,8 @@ class TelegramBot(
         if (flag) {
             val message = SendMessage()
             message.chatId = chatId.toString()
-            message.replyMarkup = keyboard
-            message.text = resolver.menuData[chatId]!!.peek().text
+            message.replyMarkup = keyboard.build()
+            message.text = keyboard.text
             try {
                 val result = execute(message)
                 resolver.lastMenuId[chatId] = result.messageId

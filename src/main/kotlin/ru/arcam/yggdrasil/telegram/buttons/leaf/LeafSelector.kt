@@ -6,10 +6,10 @@ import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
 
-class LeafSelector(chatId: Long, val leaves: HashMap<String, Leaf> = HashMap()) :
+class LeafSelector(chatId: Long, private val leaves: HashMap<String, Leaf> = HashMap()) :
     CarouselMenu(chatId, buttons = leaves.map { LeafButtonView(it.value) }, "Select service on ${leaves.values.first().attachedBranch}") {
     override fun nextLevel(key: String) {
-        val leaf = leaves.values.first{x -> x.name == key}
+        val leaf = leaves[key]!!
         resolver.notifyUpdateMenu(chatId, MenuSelector(chatId, leaf, MenuButton.entries.map{ it.button }))
     }
 }

@@ -14,28 +14,18 @@ abstract class CarouselMenu (var chatId: Long, var buttons: List<Button>, val te
     private val NEXT = "NEXT"
     private val PREVIOUS = "PREVIOUS"
 
-    open fun getMenu(): InlineKeyboardMarkup {
-        val builder = InlineKeyboardMarkup.builder()
+    open fun getMenu(): KeyboardBuilder {
         maxPages = buttons.size / MAX_SIZE + if (buttons.size % MAX_SIZE > 0) 1 else 0
         if (maxPages == 0)
             maxPages = 1
         val buttonIdx = (idx - 1) * MAX_SIZE
         var i = 0
+        val builder = KeyboardBuilder(text, arrayListOf(), "${idx}/${maxPages}")
         while (i < MAX_SIZE && i + buttonIdx < buttons.size) {
-            builder.keyboardRow(listOf(InlineKeyboardButton.builder()
-                .text(buttons[i + buttonIdx].text)
-                .callbackData(buttons[i + buttonIdx].text)
-                .build()))
+            builder.buttons.add(buttons[i + buttonIdx])
             i++
         }
-        builder.keyboardRow(
-            listOf(
-                InlineKeyboardButton.builder().text("<-").callbackData(PREVIOUS).build(),
-                InlineKeyboardButton.builder().text("${idx}/${maxPages}").callbackData(NONE).build(),
-                InlineKeyboardButton.builder().text("->").callbackData(NEXT).build()
-            )
-        )
-        return builder.build()
+        return builder
     }
 
     open fun onClick(callbackData: String): TelegramSendable? {
