@@ -11,7 +11,6 @@ import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 
 class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList(), "Select server") {
     var branches = HashMap<String, BranchInfo>()
-    var leaves = HashMap<String, Leaf>()
 
     override fun getMenu(): KeyboardBuilder {
         buttons = ArrayList()
@@ -24,6 +23,7 @@ class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList(), "Select se
     override fun nextLevel(key: String) {
         buttons = ArrayList()
         refresh()
+        val leaves = HashMap<String, Leaf>()
         for (leaf in branches[key]!!.leaves) {
             leaves[leaf.name] = leaf
             buttons.plus(LeafButtonView(leaf))
