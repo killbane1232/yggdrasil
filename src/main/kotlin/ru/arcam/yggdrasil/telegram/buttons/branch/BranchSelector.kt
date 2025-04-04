@@ -21,12 +21,9 @@ class BranchSelector(chatId: Long): CarouselMenu(chatId, ArrayList(), "Select se
     }
 
     override fun nextLevel(key: String) {
-        buttons = ArrayList()
-        refresh()
         val leaves = HashMap<String, Leaf>()
         for (leaf in branches[key]!!.leaves) {
             leaves[leaf.name] = leaf
-            buttons.plus(LeafButtonView(leaf))
         }
         resolver.notifyUpdateMenu(chatId, LeafSelector(chatId, leaves))
     }

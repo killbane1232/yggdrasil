@@ -12,8 +12,11 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
         if (other == null)
             return true
         return text == other.text
-                && buttons.containsAll(other.buttons)
-                && other.buttons.containsAll(buttons)
+                && (
+                    buttons.containsAll(other.buttons)
+                    && other.buttons.containsAll(buttons)
+                    || other.buttons.isEmpty()
+                    && buttons.isEmpty())
     }
 
     fun build(): InlineKeyboardMarkup {
