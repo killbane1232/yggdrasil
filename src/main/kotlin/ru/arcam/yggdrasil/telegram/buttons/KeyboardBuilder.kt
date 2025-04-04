@@ -10,13 +10,12 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
 
     fun equals(other: KeyboardBuilder?): Boolean {
         if (other == null)
+            return false
+        if (other.buttons.isEmpty() && buttons.isEmpty())
             return true
-        return text == other.text
-                && (
-                    buttons.containsAll(other.buttons)
-                    && other.buttons.containsAll(buttons)
-                    || other.buttons.isEmpty()
-                    && buttons.isEmpty())
+        val arr = buttons.map { it.text }
+        val arr2 = other.buttons.map { it.text }
+        return arr == arr2 && text == other.text
     }
 
     fun build(): InlineKeyboardMarkup {

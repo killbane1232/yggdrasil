@@ -32,9 +32,9 @@ class StateResolver {
 
     @Synchronized
     fun peekOnClick(chatId: Long, data: String): TelegramSendable? {
-        val previous = menuData[chatId]!!.peek().getMenu()
+        val previous = peekMenu(chatId)
         val result = menuData[chatId]!!.peek().onClick(data)
-        lastMenuChanged[chatId] = !previous.equals(menuData[chatId]!!.peek().getMenu())
+        lastMenuChanged[chatId] = !previous.equals(peekMenu(chatId))
         return result
     }
 
