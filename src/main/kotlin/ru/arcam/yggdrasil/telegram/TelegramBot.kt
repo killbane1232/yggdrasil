@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
+import java.util.*
 
 
 @Component
@@ -69,7 +70,7 @@ class TelegramBot(
         message.chatId = chatId.toString()
         val menu = BranchSelector(chatId)
         resolver.notifyUpdateMenu(chatId, menu)
-        message.replyMarkup = menu.getMenu().build()
+        message.replyMarkup = menu.getMenu().build(false)
         message.text = menu.text
 
         try {
@@ -91,7 +92,7 @@ class TelegramBot(
                     keyboard.text,
                     null,
                     null,
-                    keyboard.build(),
+                    keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).isNotEmpty()),
                     null,
                     null)
                 execute(textEditor)
@@ -104,7 +105,7 @@ class TelegramBot(
         if (flag) {
             val message = SendMessage()
             message.chatId = chatId.toString()
-            message.replyMarkup = keyboard.build()
+            message.replyMarkup = keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).isNotEmpty())
             message.text = keyboard.text
             try {
                 val result = execute(message)

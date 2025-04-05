@@ -18,7 +18,7 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
         return arr == arr2 && text == other.text
     }
 
-    fun build(): InlineKeyboardMarkup {
+    fun build(hasBack: Boolean): InlineKeyboardMarkup {
         val builder = InlineKeyboardMarkup.builder()
         buttons.forEach{
             builder.keyboardRow(listOf(it.getButton()))
@@ -32,7 +32,8 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
                     InlineKeyboardButton.builder().text("->").callbackData(NEXT).build()
                 )
             )
-        builder.keyboardRow(listOf(InlineKeyboardButton.builder().text("Back").callbackData(NONE).build()))
+        if (hasBack)
+            builder.keyboardRow(listOf(InlineKeyboardButton.builder().text("Back").callbackData(NONE).build()))
         return  builder.build()
     }
 }
