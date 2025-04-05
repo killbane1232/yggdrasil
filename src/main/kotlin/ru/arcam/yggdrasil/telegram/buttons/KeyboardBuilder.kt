@@ -21,10 +21,7 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
     fun build(): InlineKeyboardMarkup {
         val builder = InlineKeyboardMarkup.builder()
         buttons.forEach{
-            builder.keyboardRow(listOf(InlineKeyboardButton.builder()
-                .text(it.text)
-                .callbackData(it.text)
-                .build()))
+            builder.keyboardRow(listOf(it.getButton()))
         }
 
         if (footerText != null)

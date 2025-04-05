@@ -38,20 +38,7 @@ class TelegramBot(
     override fun onUpdateReceived(update: Update?) {
         if (update!!.hasCallbackQuery()) {
             val chatId = update.callbackQuery.message.chatId
-            val result = resolver.peekOnClick(chatId, update.callbackQuery.data)
-            if (result == null) {
-                sendKeyBoard(chatId)
-                return
-            }
-            sendMessage(chatId, result.sendableMethod!!.text)
-            val lastMessage = resolver.lastMenuId[chatId]
-            try {
-                if (lastMessage != null) {
-                    val deleter = DeleteMessage(chatId.toString(), lastMessage)
-                    execute(deleter)
-                    resolver.lastMenuChanged[chatId] = true
-                }
-            } catch(_: Throwable) {}
+            resolver.peekOnClick(chatId, update.callbackQuery.data)
             sendKeyBoard(chatId)
         }
         if (update.hasMessage() && update.message.hasText()) {

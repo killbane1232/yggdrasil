@@ -1,21 +1,19 @@
 package ru.arcam.yggdrasil.telegram
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
+import ru.arcam.yggdrasil.telegram.buttons.Menu
 import java.util.*
 import kotlin.collections.HashMap
 
 @Component
 class StateResolver {
-    val menuData: HashMap<Long, Stack<CarouselMenu>> = HashMap()
+    val menuData: HashMap<Long, Stack<Menu>> = HashMap()
     val lastMenuId: HashMap<Long, Int> = HashMap()
     val lastMenuChanged: HashMap<Long, Boolean> = HashMap()
-    val lastMenu: HashMap<Long, KeyboardBuilder> = HashMap()
 
     @Synchronized
-    fun notifyUpdateMenu(chatId: Long, newMenu: CarouselMenu) {
+    fun notifyUpdateMenu(chatId: Long, newMenu: Menu) {
         if (!menuData.containsKey(chatId))
             menuData[chatId] = Stack()
         lastMenuChanged[chatId] = true
@@ -31,11 +29,10 @@ class StateResolver {
     }
 
     @Synchronized
-    fun peekOnClick(chatId: Long, data: String): TelegramSendable? {
+    fun peekOnClick(chatId: Long, data: String) {
         val previous = peekMenu(chatId)
-        val result = menuData[chatId]!!.peek().onClick(data)
+        menuData[chatId]!!.peek().onClick(data)
         lastMenuChanged[chatId] = !previous.equals(peekMenu(chatId))
-        return result
     }
 
     @Synchronized

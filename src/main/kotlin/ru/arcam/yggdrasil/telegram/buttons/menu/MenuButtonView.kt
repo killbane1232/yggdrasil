@@ -1,38 +1,36 @@
 package ru.arcam.yggdrasil.telegram.buttons.menu
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import ru.arcam.yggdrasil.telegram.TelegramSendable
 import ru.arcam.yggdrasil.telegram.buttons.Button
-import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
+import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.ws.WebSocketService
 import java.util.*
 
 class MenuButtonView(text: String = ""): Button(text) {
     private var wsService = WebSocketService.wsService
 
-    override fun onClick(menu: CarouselMenu) : TelegramSendable? {
+    override fun onClick(menu: Menu) {
         val leaf = (menu as MenuSelector).leaf
         when(MenuButton.valueOf(text.uppercase(Locale.getDefault()))) {
             MenuButton.STATUS -> {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()
                 message.text = wsService.processMessage(leaf.attachedBranch, "STATUS:${leaf.name}")
-                return TelegramSendable(null, message)
+                menu.nextLevel(text)
             }
             MenuButton.STOP -> {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()
                 message.text = wsService.processMessage(leaf.attachedBranch, "STOP:${leaf.name}")
-                return TelegramSendable(null, message)
+                menu.nextLevel(text)
             }
             MenuButton.START -> {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()
                 message.text = wsService.processMessage(leaf.attachedBranch, "START:${leaf.name}")
-                return TelegramSendable(null, message)
+                menu.nextLevel(text)
             }
             MenuButton.METHOD -> {
-                menu.nextLevel("")
                 //menu.resolver.notifyUpdateMenu(menu.chatId, MethodSelector(menu.chatId, leaf!!, menu.method))
             }
 
@@ -40,11 +38,9 @@ class MenuButtonView(text: String = ""): Button(text) {
                 val message = SendMessage()
                 message.chatId = menu.chatId.toString()
                 message.text = wsService.processMessage(leaf.attachedBranch, "RESTART:${leaf.name}")
-                return TelegramSendable(null, message)
+                menu.nextLevel(text)
             }
         }
-        menu.refresh()
-        return null
     }
 
 }

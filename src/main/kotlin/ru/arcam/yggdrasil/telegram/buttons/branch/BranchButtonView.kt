@@ -1,13 +1,10 @@
 package ru.arcam.yggdrasil.telegram.buttons.branch
 
-import ru.arcam.yggdrasil.branch.BranchInfo
-import ru.arcam.yggdrasil.telegram.TelegramSendable
 import ru.arcam.yggdrasil.telegram.buttons.Button
-import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
+import ru.arcam.yggdrasil.telegram.buttons.Menu
 
-class BranchButtonView(private val serviceName: String, private val branchInfo: BranchInfo): Button(serviceName) {
-    override fun onClick(menu: CarouselMenu) : TelegramSendable? {
+class BranchButtonView(private val serviceName: String): Button(serviceName) {
+    override fun onClick(menu: Menu) {
         menu.nextLevel(serviceName)
-        return null
     }
 }
