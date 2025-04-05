@@ -32,6 +32,7 @@ class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val foot
                     InlineKeyboardButton.builder().text("->").callbackData(NEXT).build()
                 )
             )
+        builder.keyboardRow(listOf(InlineKeyboardButton.builder().text("Back").callbackData(NONE).build()))
         return  builder.build()
     }
 }

@@ -1,7 +1,5 @@
 package ru.arcam.yggdrasil.telegram.buttons
 
-import ru.arcam.yggdrasil.telegram.TelegramSendable
-
 abstract class CarouselMenu (chatId: Long, buttons: List<Button>, text: String) : Menu(chatId, buttons, text) {
     val MAX_SIZE = 5
     var idx = 1
@@ -15,7 +13,10 @@ abstract class CarouselMenu (chatId: Long, buttons: List<Button>, text: String) 
             maxPages = 1
         val buttonIdx = (idx - 1) * MAX_SIZE
         var i = 0
-        val builder = KeyboardBuilder(text, arrayListOf(), "${idx}/${maxPages}")
+        var footer: String? = "${idx}/${maxPages}"
+        if (maxPages == 1)
+            footer = null
+        val builder = KeyboardBuilder(text, arrayListOf(), footer)
         while (i < MAX_SIZE && i + buttonIdx < buttons.size) {
             builder.buttons.add(buttons[i + buttonIdx])
             i++
