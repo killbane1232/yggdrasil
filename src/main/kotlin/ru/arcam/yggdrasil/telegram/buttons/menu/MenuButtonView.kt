@@ -13,32 +13,24 @@ class MenuButtonView(text: String = ""): Button(text) {
         val leaf = (menu as MenuSelector).leaf
         when(MenuButton.valueOf(text.uppercase(Locale.getDefault()))) {
             MenuButton.STATUS -> {
-                val message = SendMessage()
-                message.chatId = menu.chatId.toString()
-                message.text = wsService.processMessage(leaf.attachedBranch, "STATUS:${leaf.name}")
-                menu.nextLevel(text)
+                val result = wsService.processMessage(leaf.attachedBranch, "STATUS:${leaf.name}")
+                menu.nextLevel(result)
             }
             MenuButton.STOP -> {
-                val message = SendMessage()
-                message.chatId = menu.chatId.toString()
-                message.text = wsService.processMessage(leaf.attachedBranch, "STOP:${leaf.name}")
-                menu.nextLevel(text)
+                val result = wsService.processMessage(leaf.attachedBranch, "STOP:${leaf.name}")
+                menu.nextLevel(result)
             }
             MenuButton.START -> {
-                val message = SendMessage()
-                message.chatId = menu.chatId.toString()
-                message.text = wsService.processMessage(leaf.attachedBranch, "START:${leaf.name}")
-                menu.nextLevel(text)
+                val result = wsService.processMessage(leaf.attachedBranch, "START:${leaf.name}")
+                menu.nextLevel(result)
             }
             MenuButton.METHOD -> {
                 //menu.resolver.notifyUpdateMenu(menu.chatId, MethodSelector(menu.chatId, leaf!!, menu.method))
             }
 
             MenuButton.RESTART -> {
-                val message = SendMessage()
-                message.chatId = menu.chatId.toString()
-                message.text = wsService.processMessage(leaf.attachedBranch, "RESTART:${leaf.name}")
-                menu.nextLevel(text)
+                val result = wsService.processMessage(leaf.attachedBranch, "RESTART:${leaf.name}")
+                menu.nextLevel(result)
             }
         }
     }
