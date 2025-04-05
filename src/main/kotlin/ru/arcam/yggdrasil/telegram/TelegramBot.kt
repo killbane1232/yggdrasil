@@ -92,7 +92,7 @@ class TelegramBot(
                     keyboard.text,
                     null,
                     null,
-                    keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).isNotEmpty()),
+                    keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).size > 1),
                     null,
                     null)
                 execute(textEditor)
@@ -105,7 +105,7 @@ class TelegramBot(
         if (flag) {
             val message = SendMessage()
             message.chatId = chatId.toString()
-            message.replyMarkup = keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).isNotEmpty())
+            message.replyMarkup = keyboard.build(resolver.menuData.getOrDefault(chatId, Stack()).size > 1)
             message.text = keyboard.text
             try {
                 val result = execute(message)
