@@ -3,7 +3,7 @@ package ru.arcam.yggdrasil.telegram.buttons
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
-class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val footerText: String?) {
+class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val footerText: String? = null) {
     private val NONE = "NONE"
     private val NEXT = "NEXT"
     private val PREVIOUS = "PREVIOUS"

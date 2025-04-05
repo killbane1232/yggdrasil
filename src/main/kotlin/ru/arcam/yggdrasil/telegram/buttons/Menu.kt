@@ -1,7 +1,6 @@
 package ru.arcam.yggdrasil.telegram.buttons
 
 import ru.arcam.yggdrasil.telegram.StateResolver
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButtonView
 
 abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: String = "Menu", ) {
     var resolver = StateResolver.resolver
@@ -23,7 +22,7 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
         val buttonsToUse = ArrayList(buttons)
         val backButton = Button("Back", NONE)
         buttonsToUse.add(backButton)
-        val builder = KeyboardBuilder(text, buttonsToUse, "")
+        val builder = KeyboardBuilder(text, buttonsToUse)
         return builder
     }
 
