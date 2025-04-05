@@ -21,8 +21,7 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
 
     open fun getMenu(): KeyboardBuilder {
         val buttonsToUse = ArrayList(buttons)
-        val backButton = MenuButtonView("Back")
-        backButton.callbackData = NONE
+        val backButton = Button("Back", NONE)
         buttonsToUse.add(backButton)
         val builder = KeyboardBuilder(text, buttonsToUse, "")
         return builder
