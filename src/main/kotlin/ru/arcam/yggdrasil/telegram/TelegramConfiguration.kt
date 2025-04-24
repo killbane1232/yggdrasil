@@ -16,8 +16,8 @@ class TelegramConfiguration {
     }
 
     val botToken: String
-        get() = properties.getProperty("telegram.bot.token") ?: throw IllegalStateException("telegram.bot.token not found in telegram.config")
+        get() = properties.getProperty("telegram.bot.token") ?: System.getenv("TELEGRAMTOKEN")?.takeIf { it.isNotBlank() } ?: throw IllegalStateException("telegram.bot.token not found in telegram.config")
 
     val botUsername: String
-        get() = properties.getProperty("telegram.bot.username") ?: throw IllegalStateException("telegram.bot.username not found in telegram.config")
+        get() = properties.getProperty("telegram.bot.username") ?: System.getenv("TELEGRAMUSERNAME")?.takeIf { it.isNotBlank() } ?: throw IllegalStateException("telegram.bot.username not found in telegram.config")
 }
