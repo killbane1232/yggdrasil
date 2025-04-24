@@ -1,8 +1,7 @@
 package ru.arcam.yggdrasil.telegram
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import java.io.File
+import ru.arcam.yggdrasil.utils.ConfigReader
 import java.util.Properties
 
 @Configuration
@@ -10,8 +9,8 @@ class TelegramConfiguration {
     private var properties: Properties = Properties()
     
     init {
-        val configFile = File("telegram.config")
-        if (configFile.exists()) {
+        val configFile = ConfigReader.loadConfig("telegram.config")
+        if (configFile != null) {
             properties.load(configFile.inputStream())
         }
     }
