@@ -35,7 +35,7 @@ networks:
 
 services:
   server:
-    image: yggdrasil:v1
+    image: ghcr.io/killbane1232/yggdrasil:latest
     container_name: yggdrasil
     restart: always
     networks:
@@ -46,7 +46,7 @@ services:
     ports:
       - "8081:8080"
   branch:
-    image: yggdrasil_branch:v1
+    image: ghcr.io/killbane1232/yggdrasil_branch:latest
     container_name: yggdrasilBranch
     restart: always
     networks:
