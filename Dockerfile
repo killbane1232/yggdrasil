@@ -74,18 +74,21 @@ RUN set -eux; \
     echo "Complete."
 
 RUN apk add docker
-# Создание рабочей директории
-WORKDIR /app
+# Создание директории для сборки
+WORKDIR /build
 
 # Копирование файлов проекта
 COPY . .
 
 # Сборка приложения
 RUN chmod +x ./gradlew && ./gradlew bootJar
+RUN mkdir -p /app
 RUN mv ./build/libs/yggdrasil-0.0.1-SNAPSHOT.jar /app/yggdrasil.jar
 
-# Создание директории для конфигурационных файлов
-RUN mkdir -p /app
+# Создание директории для приложения
+WORKDIR /app
+# Очистка директории сборки
+RUN rm -rf /build
 
 # Открытие порта
 EXPOSE 8080
