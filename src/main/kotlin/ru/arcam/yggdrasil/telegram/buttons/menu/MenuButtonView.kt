@@ -1,12 +1,11 @@
 package ru.arcam.yggdrasil.telegram.buttons.menu
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.ws.WebSocketService
 import java.util.*
 
-class MenuButtonView(text: String = ""): Button(text) {
+class MenuButtonView(text: String = "", callback: String = text): Button(text, callback) {
     private var wsService = WebSocketService.wsService
 
     override fun onClick(menu: Menu) {
@@ -24,9 +23,9 @@ class MenuButtonView(text: String = ""): Button(text) {
                 val result = wsService.processMessage(leaf.attachedBranch, "START:${leaf.name}")
                 menu.nextLevel(result)
             }
-            MenuButton.METHOD -> {
+            //MenuButton.METHOD -> {
                 //menu.resolver.notifyUpdateMenu(menu.chatId, MethodSelector(menu.chatId, leaf!!, menu.method))
-            }
+            //}
 
             MenuButton.RESTART -> {
                 val result = wsService.processMessage(leaf.attachedBranch, "RESTART:${leaf.name}")

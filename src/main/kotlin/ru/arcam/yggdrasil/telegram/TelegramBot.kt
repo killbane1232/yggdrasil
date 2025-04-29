@@ -1,4 +1,4 @@
-package ru.arcam.yggdrasil.telegram
+package ru.arcam.yggdrasil .telegram
 
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
+import ru.arcam.yggdrasil.telegram.commands.ICommand
 import java.util.*
 
 
@@ -46,10 +47,15 @@ class TelegramBot(
             val chatId = update.message.chatId
             val messageText = update.message.text
 
-            when(messageText) {
-                "/menu" -> sendMenu(chatId)
-                else ->
-                    sendMessage(chatId, "Неизвестная команда")
+            val commandRunner = ICommand::class.sealedSubclasses.firstOrNull{
+                it.annotations.firstOrNull {
+                    it.javaClass == Component::class.java && (it as Component).value ==  messageText
+                } != null
+            }?.objectInstance
+            if (commandRunner != null) {
+                commandRunner.runCommand(this)
+            } else {
+                sendMessage(chatId, "Неизвестная команда")
             }
         }
     }
