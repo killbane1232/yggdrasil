@@ -13,7 +13,7 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
             return
         }
         for (button in buttons) {
-            if (button.text == callbackData) {
+            if (button.callbackData == callbackData) {
                 button.onClick(this)
             }
         }
