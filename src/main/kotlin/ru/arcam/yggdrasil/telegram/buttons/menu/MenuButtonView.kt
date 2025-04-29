@@ -10,7 +10,7 @@ class MenuButtonView(text: String = "", callback: String = text): Button(text, c
 
     override fun onClick(menu: Menu) {
         val leaf = (menu as MenuSelector).leaf
-        when(MenuButton.valueOf(text.uppercase(Locale.getDefault()))) {
+        when(MenuButton.valueOf(callbackData.uppercase(Locale.getDefault()))) {
             MenuButton.STATUS -> {
                 val result = wsService.processMessage(leaf.attachedBranch, "STATUS:${leaf.name}")
                 menu.nextLevel(result)
