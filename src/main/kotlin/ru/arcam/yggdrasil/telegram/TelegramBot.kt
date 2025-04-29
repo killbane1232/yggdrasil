@@ -56,7 +56,7 @@ class TelegramBot(
                 }
             }
             if (commandRunner != null) {
-                commandRunner.runCommand(this)
+                commandRunner.runCommand(this, chatId)
             } else {
                 sendMessage(chatId, "Неизвестная команда")
             }
@@ -69,22 +69,6 @@ class TelegramBot(
         message.text = text
         try {
             execute(message)
-        } catch (e: TelegramApiException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun sendMenu(chatId: Long) {
-        val message = SendMessage()
-        message.chatId = chatId.toString()
-        val menu = BranchSelector(chatId)
-        resolver.notifyUpdateMenu(chatId, menu)
-        message.replyMarkup = menu.getMenu().build(false)
-        message.text = menu.text
-
-        try {
-            val result = execute(message)
-            resolver.lastMenuId[chatId] = result.messageId
         } catch (e: TelegramApiException) {
             e.printStackTrace()
         }
