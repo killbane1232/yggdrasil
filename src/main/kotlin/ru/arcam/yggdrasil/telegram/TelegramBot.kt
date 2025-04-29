@@ -48,8 +48,8 @@ class TelegramBot(
             val messageText = update.message.text
 
             val commandRunner = ICommand::class.sealedSubclasses.firstOrNull{
-                it.annotations.firstOrNull {
-                    it.javaClass == Component::class.java && (it as Component).value ==  messageText
+                it.annotations.firstOrNull { x ->
+                    (x as Component).value == messageText
                 } != null
             }?.objectInstance
             if (commandRunner != null) {
