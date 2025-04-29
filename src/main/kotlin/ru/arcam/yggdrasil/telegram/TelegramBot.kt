@@ -2,6 +2,7 @@ package ru.arcam.yggdrasil .telegram
 
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -25,6 +26,8 @@ class TelegramBot(
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
     val logger = LoggerFactory.getLogger(TelegramBot::class.java)
+    @Autowired
+    lateinit var commandRunners : List<ICommand>
 
 
     @PostConstruct
@@ -47,11 +50,11 @@ class TelegramBot(
             val chatId = update.message.chatId
             val messageText = update.message.text
 
-            val commandRunner = ICommand::class.sealedSubclasses.firstOrNull{
-                it.annotations.firstOrNull { x ->
-                    (x as Component).value == messageText
-                } != null
-            }?.objectInstance
+            val commandRunner = commandRunners.firstOrNull {
+                it.javaClass.annotations.any {
+                    annotation -> (annotation is Component) && annotation.value == messageText
+                }
+            }
             if (commandRunner != null) {
                 commandRunner.runCommand(this)
             } else {
