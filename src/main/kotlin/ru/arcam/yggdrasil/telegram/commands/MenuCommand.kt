@@ -17,7 +17,7 @@ class MenuCommand(): ICommand() {
         message.text = menu.text
 
         try {
-            val result = execute(message)
+            val result = bot.execute(message)
             bot.resolver.lastMenuId[chatId] = result.messageId
         } catch (e: TelegramApiException) {
             e.printStackTrace()
