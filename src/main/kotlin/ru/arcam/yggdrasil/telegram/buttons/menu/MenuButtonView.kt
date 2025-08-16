@@ -2,6 +2,7 @@ package ru.arcam.yggdrasil.telegram.buttons.menu
 
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
+import ru.arcam.yggdrasil.utils.AuditLogger
 import ru.arcam.yggdrasil.ws.WebSocketService
 import java.util.*
 
@@ -12,15 +13,21 @@ class MenuButtonView(text: String = "", callback: String = text): Button(text, c
         val leaf = (menu as MenuSelector).leaf
         when(MenuButton.valueOf(callbackData.uppercase(Locale.getDefault()))) {
             MenuButton.STATUS -> {
-                val result = wsService.processMessage(leaf.attachedBranch, "STATUS:${leaf.name}")
+                val message = "STATUS:${leaf.name}"
+                AuditLogger.logWsCall(menu.chatId, message)
+                val result = wsService.processMessage(leaf.attachedBranch, message)
                 menu.nextLevel(result)
             }
             MenuButton.STOP -> {
-                val result = wsService.processMessage(leaf.attachedBranch, "STOP:${leaf.name}")
+                val message = "STOP:${leaf.name}"
+                AuditLogger.logWsCall(menu.chatId, message)
+                val result = wsService.processMessage(leaf.attachedBranch, message)
                 menu.nextLevel(result)
             }
             MenuButton.START -> {
-                val result = wsService.processMessage(leaf.attachedBranch, "START:${leaf.name}")
+                val message = "START:${leaf.name}"
+                AuditLogger.logWsCall(menu.chatId, message)
+                val result = wsService.processMessage(leaf.attachedBranch, message)
                 menu.nextLevel(result)
             }
             //MenuButton.METHOD -> {
@@ -28,7 +35,9 @@ class MenuButtonView(text: String = "", callback: String = text): Button(text, c
             //}
 
             MenuButton.RESTART -> {
-                val result = wsService.processMessage(leaf.attachedBranch, "RESTART:${leaf.name}")
+                val message = "RESTART:${leaf.name}"
+                AuditLogger.logWsCall(menu.chatId, message)
+                val result = wsService.processMessage(leaf.attachedBranch, message)
                 menu.nextLevel(result)
             }
         }

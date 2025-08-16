@@ -7,11 +7,13 @@ import ru.arcam.yggdrasil.leaf.Leaf
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramBot
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
+import ru.arcam.yggdrasil.telegram.buttons.logs.LogsButton
+import ru.arcam.yggdrasil.telegram.buttons.logs.LogsSelector
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
 
-@Component(value = "/menu")
-class MenuCommand(): ICommand() {
+@Component(value = "/logs")
+class LogsCommand(): ICommand() {
     override fun runCommand(bot: TelegramBot, chatId: Long) {
         val message = SendMessage()
         message.chatId = chatId.toString()
@@ -30,11 +32,12 @@ class MenuCommand(): ICommand() {
 
     override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf) {
         resolver.notifyUpdateMenu(chatId,
-            MenuSelector(chatId,
+            LogsSelector(chatId,
                 leaf,
-                MenuButton.entries.filter{
+                LogsButton.entries.filter{
                     it.name != "METHOD" || leaf.hooks.isNotEmpty()
                 }.map{ it.button })
         )
+
     }
 }
