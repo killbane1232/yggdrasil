@@ -1,6 +1,7 @@
 package ru.arcam.yggdrasil.ws
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.converter.DefaultContentTypeResolver
@@ -33,7 +34,8 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
         val resolver = DefaultContentTypeResolver()
         resolver.defaultMimeType = MimeTypeUtils.APPLICATION_JSON
         val converter = MappingJackson2MessageConverter()
-        converter.objectMapper = ObjectMapper()
+        // Ensure Kotlin module is registered so Jackson understands Kotlin constructors and nullability
+        converter.objectMapper = jacksonObjectMapper().registerModule(KotlinModule.Builder().build())
         converter.contentTypeResolver = resolver
         messageConverters.add(converter)
         return false
