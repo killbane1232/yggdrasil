@@ -2,6 +2,7 @@ package ru.arcam.yggdrasil.telegram.buttons.menu
 
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
+import ru.arcam.yggdrasil.telegram.buttons.method.MethodSelector
 import ru.arcam.yggdrasil.utils.AuditLogger
 import ru.arcam.yggdrasil.ws.WebSocketService
 import java.util.*
@@ -30,9 +31,9 @@ class MenuButtonView(text: String = "", callback: String = text): Button(text, c
                 val result = wsService.processMessage(leaf.attachedBranch, message)
                 menu.nextLevel(result)
             }
-            //MenuButton.METHOD -> {
-                //menu.resolver.notifyUpdateMenu(menu.chatId, MethodSelector(menu.chatId, leaf!!, menu.method))
-            //}
+            MenuButton.METHOD -> {
+                menu.resolver.notifyUpdateMenu(menu.chatId, MethodSelector(menu.chatId, leaf))
+            }
 
             MenuButton.RESTART -> {
                 val message = "RESTART:${leaf.name}"
