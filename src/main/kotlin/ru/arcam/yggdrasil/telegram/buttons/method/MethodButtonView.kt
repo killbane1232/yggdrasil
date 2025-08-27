@@ -13,6 +13,7 @@ class MethodButtonView(private val leaf: Leaf, private val hook: LeafHook) : But
     override fun onClick(menu: Menu) {
         val message = "METHOD:${leaf.name}:${hook.name}"
         AuditLogger.logWsCall(menu.chatId, message)
-        wsService.processMessage(leaf.attachedBranch, message)
+        val result = wsService.processMessage(leaf.attachedBranch, message)
+        menu.nextLevel(result)
     }
 } 
