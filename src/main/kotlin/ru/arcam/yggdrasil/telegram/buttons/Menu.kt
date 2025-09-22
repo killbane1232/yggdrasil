@@ -58,10 +58,12 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
     fun waitForMessage(message: String, onResult: (String) -> Unit) {
         waiter = CompletableFuture<String>()
         waiterText = message
+        resolver.lastMenuChanged[chatId] = true
         Thread {
             val result = waiter!!.get()
+            waiterText = null
+            waiter = null
             onResult(result)
         }.start()
-        resolver.lastMenuChanged[chatId] = true
     }
 }
