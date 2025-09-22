@@ -62,5 +62,7 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
             val result = waiter!!.get()
             onResult(result)
         }.start()
+        resolver.lastMenuChanged[chatId] = true
+        resolver.bot!!.sendKeyBoard(chatId, resolver.peekMenu(chatId))
     }
 }
