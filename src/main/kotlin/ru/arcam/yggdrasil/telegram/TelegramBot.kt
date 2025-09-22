@@ -32,6 +32,7 @@ class TelegramBot(
     fun deployBot() {
         val botsApi = TelegramBotsApi(DefaultBotSession::class.java)
         botsApi.registerBot(this)
+        resolver.bot = this
     }
 
     override fun getBotUsername(): String {

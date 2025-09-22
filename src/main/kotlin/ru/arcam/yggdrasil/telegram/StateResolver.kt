@@ -12,6 +12,8 @@ class StateResolver {
     val lastMenuId: HashMap<Long, Int> = HashMap()
     val lastMenuChanged: HashMap<Long, Boolean> = HashMap()
 
+    var bot: TelegramBot? = null
+
     @Synchronized
     fun notifyUpdateMenu(chatId: Long, newMenu: Menu) {
         if (!menuData.containsKey(chatId))
@@ -39,9 +41,13 @@ class StateResolver {
     fun peekOnMessage(chatId: Long, data: String): Boolean {
         val previous = peekMenu(chatId)
         if (menuData[chatId] != null) {
-            menuData[chatId]!!.peek().onMessage(data)
+            val result = menuData[chatId]!!.peek().onMessage(data)
             lastMenuChanged[chatId] = !previous.equals(peekMenu(chatId))
-            return true
+            if (result) {
+                if (bot != null)
+                    bot!!.sendKeyBoard(chatId)
+            }
+            return result
         }
         return false
     }
