@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
@@ -59,6 +60,8 @@ class TelegramBot(
             } else {
                 if (!resolver.peekOnMessage(chatId, messageText)) {
                     sendMessage(chatId, "Неизвестная команда")
+                } else {
+                    DeleteMessage(chatId.toString(), update.message.messageId)
                 }
             }
         }
