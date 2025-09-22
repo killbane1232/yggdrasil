@@ -61,7 +61,8 @@ class TelegramBot(
                 if (!resolver.peekOnMessage(chatId, messageText)) {
                     sendMessage(chatId, "Неизвестная команда")
                 } else {
-                    DeleteMessage(chatId.toString(), update.message.messageId)
+                    val del = DeleteMessage(chatId.toString(), update.message.messageId)
+                    execute(del)
                 }
             }
         }
