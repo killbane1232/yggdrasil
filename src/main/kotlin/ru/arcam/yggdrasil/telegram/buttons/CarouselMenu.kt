@@ -1,5 +1,7 @@
 package ru.arcam.yggdrasil.telegram.buttons
 
+import java.util.ArrayList
+
 abstract class CarouselMenu (chatId: Long, buttons: List<Button>, text: String) : Menu(chatId, buttons, text) {
     val MAX_SIZE = 5
     var idx = 1
@@ -8,6 +10,9 @@ abstract class CarouselMenu (chatId: Long, buttons: List<Button>, text: String) 
     private val PREVIOUS = "PREVIOUS"
 
     override fun getMenu(): KeyboardBuilder {
+        if (waiterText != null) {
+            return KeyboardBuilder(waiterText!!, ArrayList())
+        }
         maxPages = buttons.size / MAX_SIZE + if (buttons.size % MAX_SIZE > 0) 1 else 0
         if (maxPages == 0)
             maxPages = 1
