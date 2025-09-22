@@ -15,10 +15,10 @@ class AuditCommand(): ICommand() {
         message.chatId = chatId.toString()
         
         val lastLines = AuditLogger.getLastLines(10)
-        val auditText = if (lastLines.size == 1 && lastLines[0] in listOf("Аудит пуст", "Ошибка чтения аудита")) {
+        val auditText = if (lastLines.size == 1 && lastLines[0] in listOf("Audit is Empty", "Audit reading error")) {
             lastLines[0]
         } else {
-            "Последние 10 записей аудита:\n\n" + lastLines.joinToString("\n")
+            lastLines.joinToString("\n")
         }
         
         message.text = auditText

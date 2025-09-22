@@ -15,20 +15,27 @@ class LogsButtonView(text: String = "", callback: String = text): Button(text, c
             LogsButton.TAIL -> {
                 val message = "TAIL:${leaf.name}"
                 AuditLogger.logWsCall(menu.chatId, message)
-                val result = wsService.processMessage(leaf.attachedBranch, message)
-                menu.nextLevel(result)
+                wsService.processMessageAsync(leaf.attachedBranch, message) { result ->
+                    menu.nextLevel(result)
+                }
             }
             LogsButton.TAIL_N -> {
-                val num = menu.waitForMessage("Write number of rows")
-                if (num.isBlank())
-                    menu.onClick("NONE")
-                val intNum = num.toIntOrNull()
-                if (intNum != null)
-                    menu.onClick("NONE")
-                val message = "TAIL_N:${leaf.name}:${intNum}"
-                AuditLogger.logWsCall(menu.chatId, message)
-                val result = wsService.processMessage(leaf.attachedBranch, message)
-                menu.nextLevel(result)
+                menu.waitForMessage("Write number of rows") { num ->
+                    if (num.isBlank()) {
+                        menu.onClick("NONE")
+                        return@waitForMessage
+                    }
+                    val intNum = num.toIntOrNull()
+                    if (intNum == null) {
+                        menu.onClick("NONE")
+                        return@waitForMessage
+                    }
+                    val message = "TAIL_N:${leaf.name}:${intNum}"
+                    AuditLogger.logWsCall(menu.chatId, message)
+                    wsService.processMessageAsync(leaf.attachedBranch, message) { result ->
+                        menu.nextLevel(result)
+                    }
+                }
             }
         }
     }

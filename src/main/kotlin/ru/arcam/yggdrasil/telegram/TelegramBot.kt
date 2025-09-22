@@ -7,15 +7,13 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
+import ru.arcam.yggdrasil.telegram.StateResolver
+import ru.arcam.yggdrasil.telegram.TelegramConfiguration
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
-import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 import ru.arcam.yggdrasil.telegram.commands.ICommand
 import java.util.*
 
@@ -58,7 +56,9 @@ class TelegramBot(
             if (commandRunner != null) {
                 commandRunner.runCommand(this, chatId)
             } else {
-                sendMessage(chatId, "Неизвестная команда")
+                if (!resolver.peekOnMessage(chatId, messageText)) {
+                    sendMessage(chatId, "Неизвестная команда")
+                }
             }
         }
     }

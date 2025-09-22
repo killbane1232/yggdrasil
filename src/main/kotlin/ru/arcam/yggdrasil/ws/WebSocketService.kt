@@ -30,6 +30,15 @@ class WebSocketService(private val messagingTemplate: SimpMessagingTemplate) {
         return requestBuffer.addRequest(username).get()
     }
 
+    fun processMessageAsync(username: String, data: String, onResult: (String) -> Unit) {
+        println("Sending message to /topic/message/$username: $data")
+        messagingTemplate.convertAndSend("/topic/message/$username", data)
+        Thread {
+            val result = requestBuffer.addRequest(username).get()
+            onResult(result)
+        }.start()
+    }
+
     @MessageMapping("/callback/{username}")
     fun callbackMessage(@DestinationVariable username: String, @Payload data: String) {
         requestBuffer.handleResponse(username, data)

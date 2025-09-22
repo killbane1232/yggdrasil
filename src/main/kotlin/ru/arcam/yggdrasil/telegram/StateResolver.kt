@@ -36,6 +36,17 @@ class StateResolver {
     }
 
     @Synchronized
+    fun peekOnMessage(chatId: Long, data: String): Boolean {
+        val previous = peekMenu(chatId)
+        if (menuData[chatId] != null) {
+            menuData[chatId]!!.peek().onMessage(data)
+            lastMenuChanged[chatId] = !previous.equals(peekMenu(chatId))
+            return true
+        }
+        return false
+    }
+
+    @Synchronized
     fun peekMenu(chatId: Long): KeyboardBuilder {
         return menuData[chatId]!!.peek().getMenu()
     }
