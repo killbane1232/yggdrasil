@@ -17,6 +17,7 @@ class LogsButtonView(text: String = "", callback: String = text): Button(text, c
                 AuditLogger.logWsCall(menu.chatId, message)
                 wsService.processMessageAsync(leaf.attachedBranch, message) { result ->
                     menu.nextLevel(result)
+                    menu.resolver.bot?.sendKeyBoard(menu.chatId)
                 }
             }
             LogsButton.TAIL_N -> {
@@ -34,6 +35,7 @@ class LogsButtonView(text: String = "", callback: String = text): Button(text, c
                     AuditLogger.logWsCall(menu.chatId, message)
                     wsService.processMessageAsync(leaf.attachedBranch, message) { result ->
                         menu.nextLevel(result)
+                        menu.resolver.bot?.sendKeyBoard(menu.chatId)
                     }
                 }
             }
