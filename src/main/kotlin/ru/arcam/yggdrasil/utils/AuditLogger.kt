@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 object AuditLogger {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     private val logger = LoggerFactory.getLogger("AUDIT")
-    private val auditFile = File("audit.log")
+    private val auditFile = File("log/audit.log")
     
     fun logWsCall(chatId: Long, message: String) {
         val timestamp = LocalDateTime.now().format(formatter)

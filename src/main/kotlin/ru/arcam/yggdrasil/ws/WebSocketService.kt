@@ -35,6 +35,7 @@ class WebSocketService(private val messagingTemplate: SimpMessagingTemplate) {
         messagingTemplate.convertAndSend("/topic/message/$username", data)
         Thread {
             val result = requestBuffer.addRequest(username).get()
+            println("Message result: $result")
             onResult(result)
         }.start()
     }
