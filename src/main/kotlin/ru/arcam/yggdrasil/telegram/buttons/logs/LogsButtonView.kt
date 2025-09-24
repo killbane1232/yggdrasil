@@ -22,13 +22,16 @@ class LogsButtonView(text: String = "", callback: String = text): Button(text, c
             }
             LogsButton.TAIL_N -> {
                 menu.waitForMessage("Write number of rows") { num ->
-                    if (num.isBlank()) {
+                    val clearNum = num.trim()
+                    if (clearNum.isBlank()) {
                         menu.onClick("NONE")
+                        menu.resolver.bot?.sendKeyBoard(menu.chatId)
                         return@waitForMessage
                     }
-                    val intNum = num.toIntOrNull()
-                    if (intNum == null) {
+                    val intNum = clearNum.toIntOrNull()
+                    if (intNum == null || intNum <= 0) {
                         menu.onClick("NONE")
+                        menu.resolver.bot?.sendKeyBoard(menu.chatId)
                         return@waitForMessage
                     }
                     val message = "TAIL_N:${leaf.name}:${intNum}"
