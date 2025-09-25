@@ -9,8 +9,7 @@ import ru.arcam.yggdrasil.telegram.TelegramBot
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
 import ru.arcam.yggdrasil.telegram.buttons.logs.LogsButton
 import ru.arcam.yggdrasil.telegram.buttons.logs.LogsSelector
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
+import ru.arcam.yggdrasil.users.UserRight
 
 @Component(value = "/logs")
 class LogsCommand(): ICommand() {
@@ -30,7 +29,7 @@ class LogsCommand(): ICommand() {
         }
     }
 
-    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf) {
+    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight) {
         resolver.notifyUpdateMenu(chatId,
             LogsSelector(chatId,
                 leaf,

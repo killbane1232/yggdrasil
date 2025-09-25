@@ -7,8 +7,8 @@ import ru.arcam.yggdrasil.leaf.Leaf
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramBot
 import ru.arcam.yggdrasil.telegram.buttons.branch.BranchSelector
-import ru.arcam.yggdrasil.telegram.buttons.menu.MenuButton
 import ru.arcam.yggdrasil.telegram.buttons.menu.MenuSelector
+import ru.arcam.yggdrasil.users.UserRight
 
 @Component(value = "/menu")
 class MenuCommand(): ICommand() {
@@ -28,13 +28,15 @@ class MenuCommand(): ICommand() {
         }
     }
 
-    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf) {
+    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight) {
         resolver.notifyUpdateMenu(chatId,
-            MenuSelector(chatId,
+            MenuSelector(
+                chatId,
                 leaf,
-                MenuButton.entries.filter{
+                role.getMethods().filter{
                     it.name != "METHOD" || leaf.hooks.isNotEmpty()
-                }.map{ it.button })
+                }.map{ it.button }
+            )
         )
     }
 }

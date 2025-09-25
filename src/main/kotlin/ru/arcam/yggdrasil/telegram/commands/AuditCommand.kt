@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.arcam.yggdrasil.leaf.Leaf
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramBot
+import ru.arcam.yggdrasil.users.UserRight
 import ru.arcam.yggdrasil.utils.AuditLogger
 
 @Component(value = "/audit")
@@ -30,7 +31,7 @@ class AuditCommand(): ICommand() {
         }
     }
 
-    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf) {
+    override fun takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight) {
         // Эта команда не использует меню
     }
 } 

@@ -3,6 +3,7 @@ package ru.arcam.yggdrasil.telegram.buttons.branch
 import ru.arcam.yggdrasil.branch.BranchController
 import ru.arcam.yggdrasil.branch.BranchInfo
 import ru.arcam.yggdrasil.leaf.Leaf
+import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
@@ -14,15 +15,20 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
     override fun getMenu(): KeyboardBuilder {
         buttons = ArrayList()
         branches = BranchController.branchStorage.storage
-        for(i in branches.keys)
-            buttons = buttons.plus(BranchButtonView(i))
+        for(i in branches.keys) {
+            val role = UserResolver.resolver.getUserRoleByChatId(chatId, i)
+            if (role.isAny())
+                buttons = buttons.plus(BranchButtonView(i))
+        }
         return super.getMenu()
     }
 
     override fun nextLevel(key: String) {
         val leaves = HashMap<String, Leaf>()
         for (leaf in branches[key]!!.leaves) {
-            leaves[leaf.name] = leaf
+            val role = UserResolver.resolver.getUserRoleByChatId(chatId, key, leaf.name)
+            if (role.isAny())
+                leaves[leaf.name] = leaf
         }
         resolver.notifyUpdateMenu(chatId, LeafSelector(chatId, leaves, command))
     }

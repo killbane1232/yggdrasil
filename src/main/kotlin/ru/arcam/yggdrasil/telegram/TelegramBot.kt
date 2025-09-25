@@ -2,7 +2,6 @@ package ru.arcam.yggdrasil .telegram
 
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -12,8 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
-import ru.arcam.yggdrasil.telegram.StateResolver
-import ru.arcam.yggdrasil.telegram.TelegramConfiguration
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.commands.ICommand
 import java.util.*
@@ -21,12 +18,13 @@ import java.util.*
 
 @Component
 class TelegramBot(
-    private var tgBotConfig: TelegramConfiguration
+    private var tgBotConfig: TelegramConfiguration,
+    private var commandRunners : List<ICommand>,
+    private val userResolver: UserResolver
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
     val logger = LoggerFactory.getLogger(TelegramBot::class.java)
-    @Autowired
-    lateinit var commandRunners : List<ICommand>
+
 
 
     @PostConstruct
@@ -49,6 +47,12 @@ class TelegramBot(
         if (update.hasMessage() && update.message.hasText()) {
             val chatId = update.message.chatId
             val messageText = update.message.text
+            val userName = update.message.from.userName
+            val role = userResolver.getUserRoleByName(userName)
+            if (!role.isAny()) {
+                return
+            }
+            UserResolver.chatIdToUser[chatId] = userName
 
             val commandRunner = commandRunners.firstOrNull {
                 it.javaClass.annotations.any {
