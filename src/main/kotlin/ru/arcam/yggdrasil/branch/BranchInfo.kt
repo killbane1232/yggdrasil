@@ -14,7 +14,5 @@ data class BranchInfo(
     @JsonProperty
     val allowedUsers : Map<String, UserRight> = hashMapOf(),
     @JsonProperty
-    val allowHierarchy: Boolean = true,
-    @JsonProperty
     val leaves : List<Leaf> = ArrayList()
 )

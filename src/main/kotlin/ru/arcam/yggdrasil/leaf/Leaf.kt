@@ -15,7 +15,5 @@ data class Leaf(
     @JsonProperty
     val allowedUsers : Map<String, UserRight> = hashMapOf(),
     @JsonProperty
-    val allowHierarchy: Boolean = true,
-    @JsonProperty
     val hooks: List<LeafHook> = ArrayList()
 )

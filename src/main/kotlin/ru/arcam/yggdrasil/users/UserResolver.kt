@@ -9,13 +9,20 @@ import ru.arcam.yggdrasil.utils.ConfigReader
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.LocalDateTime
 import kotlin.collections.HashMap
 
 
 @Configuration
 class UserResolver {
     final val userByName: HashMap<String, User> = HashMap()
+    var lastCheck = LocalDateTime.now()
+
     init {
+        readConfig()
+    }
+
+    private final fun readConfig() {
         val config = ConfigReader.loadConfig("user.config")
         if (config != null && config.exists()) {
             val lines: List<String> = Files.readAllLines(Paths.get(config.path), StandardCharsets.UTF_8)
@@ -25,11 +32,16 @@ class UserResolver {
                     userByName[lineSplit[0]] = User(lineSplit[0], UserRole.valueOf(lineSplit[1]))
                 }
             }
+            lastCheck = LocalDateTime.now()
         }
     }
 
     @Synchronized
     fun getUserRoleByName(name: String, branchName: String? = null, leafName: String? = null): UserRight {
+        val now = LocalDateTime.now()
+        if (now.minusSeconds(15) > lastCheck) {
+            readConfig()
+        }
         if (userByName.isEmpty()) {
             return UserRole.ADMIN.userRight
         }
@@ -54,7 +66,7 @@ class UserResolver {
                 role.write || servRole.write,
                 role.execute || servRole.execute
             )
-        var leafRole = role
+        var leafRole = servRole
         if (leaf.allowedUsers.isNotEmpty() && leaf.allowedUsers.containsKey(name)) {
             leafRole = leaf.allowedUsers[name]!!
         }
