@@ -52,7 +52,7 @@ class TelegramBot(
             if (!role.isAny()) {
                 return
             }
-            UserResolver.chatIdToUser[chatId] = userName
+            userResolver.chatIdToUser[chatId] = userName
 
             val commandRunner = commandRunners.firstOrNull {
                 it.javaClass.annotations.any {

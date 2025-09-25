@@ -17,6 +17,7 @@ import kotlin.collections.HashMap
 class UserResolver {
     final val userByName: HashMap<String, User> = HashMap()
     var lastCheck = LocalDateTime.now()
+    var chatIdToUser: HashMap<Long, String> = HashMap()
 
     init {
         readConfig()
@@ -84,6 +85,5 @@ class UserResolver {
 
     companion object {
         var resolver: UserResolver = UserResolver()
-        var chatIdToUser: HashMap<Long, String> = HashMap()
     }
 }
