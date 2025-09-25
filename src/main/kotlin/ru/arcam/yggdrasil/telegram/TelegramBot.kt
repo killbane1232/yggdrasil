@@ -20,9 +20,9 @@ import java.util.*
 class TelegramBot(
     private var tgBotConfig: TelegramConfiguration,
     private var commandRunners : List<ICommand>,
-    private val userResolver: UserResolver
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
+    private val userResolver: UserResolver = UserResolver.resolver
     val logger = LoggerFactory.getLogger(TelegramBot::class.java)
 
 
