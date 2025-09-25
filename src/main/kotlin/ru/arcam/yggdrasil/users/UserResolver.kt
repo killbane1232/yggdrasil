@@ -58,7 +58,7 @@ class UserResolver {
         val branch = storage[branchName]!!
         var servRole = role
         if (branch.allowedUsers.isNotEmpty() && branch.allowedUsers.containsKey(name)) {
-            servRole = branch.allowedUsers[branchName]!!
+            servRole = branch.allowedUsers[name]!!
         }
         val leaf = branch.leaves.firstOrNull { it.name == leafName }
         if (leaf == null)
