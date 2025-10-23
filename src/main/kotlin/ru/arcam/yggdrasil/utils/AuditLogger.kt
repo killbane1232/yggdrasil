@@ -13,6 +13,9 @@ object AuditLogger {
     fun logWsCall(chatId: Long, message: String) {
         val timestamp = LocalDateTime.now().format(formatter)
         val logEntry = "$timestamp: $chatId: $message"
+        if (!auditFile.exists())
+            auditFile.createNewFile()
+        auditFile.writeText("\n$logEntry")
         logger.info(logEntry)
     }
     
