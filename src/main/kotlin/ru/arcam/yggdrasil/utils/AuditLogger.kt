@@ -15,8 +15,8 @@ object AuditLogger {
         val logEntry = "$timestamp: $chatId: $message"
         if (!auditFile.exists())
             auditFile.createNewFile()
-        auditFile.writeText("\n$logEntry")
-        logger.info(logEntry)
+        auditFile.appendText("\n$logEntry")
+        //logger.info(logEntry)
     }
     
     fun getLastLines(count: Int): List<String> {
