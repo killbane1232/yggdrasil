@@ -1,10 +1,7 @@
-package ru.arcam.yggdrasil.telegram
+package ru.arcam.yggdrasil.users
 
 import org.springframework.context.annotation.Configuration
 import ru.arcam.yggdrasil.branch.BranchController
-import ru.arcam.yggdrasil.users.Group
-import ru.arcam.yggdrasil.users.UserRight
-import ru.arcam.yggdrasil.users.UserRole
 import ru.arcam.yggdrasil.utils.ConfigReader
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -190,7 +187,7 @@ class GroupResolver {
 
     @Synchronized
     fun getUserRoleByChatId(chatId: Long, branchName: String? = null, leafName: String? = null): UserRight {
-        return getUserRoleByName(chatIdToUser[chatId]!!, branchName, leafName)
+        return getGroupRoleByName(chatIdToUser[chatId]!!, branchName, leafName)
     }
 
     companion object {

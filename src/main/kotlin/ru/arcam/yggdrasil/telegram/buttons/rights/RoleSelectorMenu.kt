@@ -28,7 +28,7 @@ class RoleSelectorMenu(
             roleButtons.add(RoleButtonView(groupName, role, parentMenu, "$prefix${role.name}"))
         }
         buttons = roleButtons
-        return KeyboardBuilder(text, buttons)
+        return KeyboardBuilder(text, roleButtons)
     }
 
     override fun nextLevel(key: String) {
