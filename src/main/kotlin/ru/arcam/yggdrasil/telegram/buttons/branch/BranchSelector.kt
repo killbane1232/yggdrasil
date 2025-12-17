@@ -9,7 +9,9 @@ import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 import ru.arcam.yggdrasil.telegram.commands.ICommand
-import ru.arcam.yggdrasil.telegram.buttons.rights.GroupEditorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.GroupSelectorMenu
+import ru.arcam.yggdrasil.users.GroupResolver
+import ru.arcam.yggdrasil.users.UserRole
 
 class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, ArrayList(), "Select server") {
     var branches = HashMap<String, BranchInfo>()
@@ -22,8 +24,11 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
             if (role.isAny())
                 buttons = buttons.plus(BranchButtonView(i))
         }
-        // Кнопка управления группами/пользователями в конце меню
-        buttons = buttons.plus(BranchGroupsEditButton())
+        // Кнопка управления группами/пользователями в конце меню (только для ADMIN)
+        val globalRole = GroupResolver.resolver.getUserRoleEnumByChatId(chatId)
+        if (globalRole == UserRole.ADMIN) {
+            buttons = buttons.plus(BranchGroupsEditButton())
+        }
         return super.getMenu()
     }
 
@@ -40,7 +45,7 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
 
 class BranchGroupsEditButton : Button("⚙ Группы и пользователи", "EDIT_GROUPS") {
     override fun onClick(menu: ru.arcam.yggdrasil.telegram.buttons.Menu) {
-        menu.resolver.notifyUpdateMenu(menu.chatId, GroupEditorMenu(menu.chatId))
+        menu.resolver.notifyUpdateMenu(menu.chatId, GroupSelectorMenu(menu.chatId))
     }
 }
 

@@ -85,7 +85,7 @@ class GroupResolver {
     }
 
     @Synchronized
-    fun addOrUpdateGroupFromLine(name: String) {
+    fun addGroup(name: String) {
         val current = getAllGroups().toMutableList()
         val idx = current.indexOfFirst { it.groupName == name }
         val newGroup = Group(
@@ -188,6 +188,57 @@ class GroupResolver {
     @Synchronized
     fun getUserRoleByChatId(chatId: Long, branchName: String? = null, leafName: String? = null): UserRight {
         return getGroupRoleByName(chatIdToUser[chatId]!!, branchName, leafName)
+    }
+
+    @Synchronized
+    fun getUserRoleEnumByChatId(chatId: Long): UserRole {
+        val now = LocalDateTime.now()
+        if (now.minusSeconds(15) > lastCheck) {
+            readConfig()
+        }
+        val userName = chatIdToUser[chatId] ?: return UserRole.NONE
+        if (groupsByName.isEmpty()) {
+            return UserRole.ADMIN
+        }
+        val userGroups = groupsByName.filter { it.userIds.contains(userName) }
+        if (userGroups.isEmpty()) {
+            return UserRole.NONE
+        }
+        // Возвращаем максимальную роль из всех групп пользователя
+        // Приоритет: ADMIN > ONLY_RESTART > ONLY_METHODS > READER > NONE
+        return userGroups.map { it.globalRole }.maxByOrNull {
+            when (it) {
+                UserRole.ADMIN -> 5
+                UserRole.ONLY_RESTART -> 4
+                UserRole.ONLY_METHODS -> 3
+                UserRole.READER -> 2
+                UserRole.NONE -> 1
+            }
+        } ?: UserRole.NONE
+    }
+
+    @Synchronized
+    fun getUsersByGroup(groupName: String): Collection<String> {
+        var group = groupsByName.firstOrNull { it.groupName == groupName }
+        if (group != null)
+            return group.userIds
+        return listOf()
+    }
+
+    fun updateGroup(groupName: String, userRole: UserRole, users: Set<String>) {
+        val current = getAllGroups().toMutableList()
+        val idx = current.indexOfFirst { it.groupName == groupName }
+        val newGroup = Group(
+            groupName = groupName,
+            globalRole = userRole,
+            userIds = users
+        )
+        if (idx >= 0) {
+            current[idx] = newGroup
+        } else {
+            current.add(newGroup)
+        }
+        saveGroups(current)
     }
 
     companion object {

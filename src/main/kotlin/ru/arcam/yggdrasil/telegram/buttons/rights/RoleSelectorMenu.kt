@@ -22,6 +22,7 @@ class RoleSelectorMenu(
             val isCurrent = when (parentMenu) {
                 is BranchRightsEditorMenu -> parentMenu.groupRoles[groupName] == role
                 is LeafRightsEditorMenu -> parentMenu.groupRoles[groupName] == role
+                is GroupEditorMenu -> parentMenu.userRole == role
                 else -> false
             }
             val prefix = if (isCurrent) "✓ " else ""

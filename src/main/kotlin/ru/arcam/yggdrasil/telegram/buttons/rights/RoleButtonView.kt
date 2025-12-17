@@ -14,6 +14,7 @@ class RoleButtonView(
         when (parentMenu) {
             is BranchRightsEditorMenu -> parentMenu.setRole(groupName, role)
             is LeafRightsEditorMenu -> parentMenu.setRole(groupName, role)
+            is GroupEditorMenu -> parentMenu.setRole(role)
         }
     }
 }
