@@ -11,8 +11,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
+import ru.arcam.yggdrasil.telegram.StateResolver
+import ru.arcam.yggdrasil.telegram.TelegramConfiguration
+import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.commands.ICommand
+import ru.arcam.yggdrasil.users.GroupResolver
 import java.util.*
 
 
@@ -23,6 +27,7 @@ class TelegramBot(
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
     private val userResolver: UserResolver = UserResolver.resolver
+    private val groupResolver: GroupResolver = GroupResolver.resolver
     val logger = LoggerFactory.getLogger(TelegramBot::class.java)
 
 
@@ -49,7 +54,8 @@ class TelegramBot(
             val messageText = update.message.text
             val userName = update.message.from.userName
             val role = userResolver.getUserRoleByName(userName)
-            if (!role.isAny()) {
+            val role2 = groupResolver.getUserRoleByName(userName)
+            if (!role.isAny() && !role2.isAny()) {
                 return
             }
             userResolver.chatIdToUser[chatId] = userName

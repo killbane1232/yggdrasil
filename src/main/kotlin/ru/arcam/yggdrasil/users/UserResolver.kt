@@ -83,6 +83,17 @@ class UserResolver {
         return getUserRoleByName(chatIdToUser[chatId]!!, branchName, leafName)
     }
 
+    fun getUserRoleEnumByChatId(chatId: Long): UserRole {
+        val name = chatIdToUser[chatId]
+        if (userByName.isEmpty()) {
+            return UserRole.ADMIN
+        }
+        if (!userByName.containsKey(name))
+            return UserRole.NONE
+        val user = userByName[name]!!
+        return user.globalRole
+    }
+
     companion object {
         var resolver: UserResolver = UserResolver()
     }

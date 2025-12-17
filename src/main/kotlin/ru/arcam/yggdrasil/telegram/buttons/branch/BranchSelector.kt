@@ -26,7 +26,8 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
         }
         // Кнопка управления группами/пользователями в конце меню (только для ADMIN)
         val globalRole = GroupResolver.resolver.getUserRoleEnumByChatId(chatId)
-        if (globalRole == UserRole.ADMIN) {
+        val globalRole2 = UserResolver.resolver.getUserRoleEnumByChatId(chatId)
+        if (globalRole == UserRole.ADMIN || globalRole2 == UserRole.ADMIN) {
             buttons = buttons.plus(BranchGroupsEditButton())
         }
         return super.getMenu()

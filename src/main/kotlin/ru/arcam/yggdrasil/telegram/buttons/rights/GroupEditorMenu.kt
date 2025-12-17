@@ -24,7 +24,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
         val newButtons = ArrayList<Button>()
         val group = groups.first{it.groupName == groupName}
         userRole = group.globalRole
-        users = group.userIds
+        users = group.userNames
         newButtons.add(GroupEditButtonView(groupName, users.size))
         newButtons.add(GroupChangeRightsButtonView(groupName, userRole))
         newButtons.add(GroupSaveButtonView())

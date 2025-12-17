@@ -7,5 +7,5 @@ data class Group (
     val globalRole: UserRole = UserRole.NONE,
     val serverAllowedServers: List<String> = ArrayList(),
     val serverAllowedServices: Map<String, List<String>> = HashMap(),
-    var userIds: Set<String> = HashSet()
+    var userNames: Set<String> = HashSet()
 )

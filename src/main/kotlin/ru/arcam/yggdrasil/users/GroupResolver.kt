@@ -35,7 +35,7 @@ class GroupResolver {
                         val newGroup = Group(
                             groupName = lineSplit[0],
                             globalRole = UserRole.valueOf(lineSplit[1]),
-                            userIds = userSplit.filter { it.isNotBlank() }.toSet()
+                            userNames = userSplit.filter { it.isNotBlank() }.toSet()
                         )
                         groupsByName.add(newGroup)
                     }
@@ -54,7 +54,7 @@ class GroupResolver {
                 globalRole = it.globalRole,
                 serverAllowedServers = it.serverAllowedServers,
                 serverAllowedServices = it.serverAllowedServices,
-                userIds = HashSet(it.userIds)
+                userNames = HashSet(it.userNames)
             )
         }
     }
@@ -64,7 +64,7 @@ class GroupResolver {
         val config = ConfigReader.loadConfig("group.config") ?: return
         val path = Paths.get(config.path)
         val lines = newGroups.map { group ->
-            val users = group.userIds.joinToString(",")
+            val users = group.userNames.joinToString(",")
             "${group.groupName}:${group.globalRole.name}:$users"
         }
         Files.write(path, lines, StandardCharsets.UTF_8)
@@ -79,7 +79,7 @@ class GroupResolver {
         val idx = current.indexOfFirst { it.groupName == groupName }
         if (idx >= 0) {
             val g = current[idx]
-            current[idx] = g.copy(userIds = newUserIds)
+            current[idx] = g.copy(userNames = newUserIds)
             saveGroups(current)
         }
     }
@@ -93,7 +93,7 @@ class GroupResolver {
             globalRole = UserRole.NONE,
             serverAllowedServers = if (idx >= 0) current[idx].serverAllowedServers else emptyList(),
             serverAllowedServices = if (idx >= 0) current[idx].serverAllowedServices else emptyMap(),
-            userIds = if (idx >= 0) current[idx].userIds else emptySet()
+            userNames = if (idx >= 0) current[idx].userNames else emptySet()
         )
         if (idx >= 0) {
             current[idx] = newGroup
@@ -130,7 +130,7 @@ class GroupResolver {
         if (groupsByName.isEmpty()) {
             return UserRole.ADMIN.userRight
         }
-        val userGroups = groupsByName.filter { it.userIds.contains(name) }
+        val userGroups = groupsByName.filter { it.userNames.contains(name) }
         if (userGroups.isEmpty()) {
             return UserRole.NONE.userRight
         }
@@ -200,7 +200,7 @@ class GroupResolver {
         if (groupsByName.isEmpty()) {
             return UserRole.ADMIN
         }
-        val userGroups = groupsByName.filter { it.userIds.contains(userName) }
+        val userGroups = groupsByName.filter { it.userNames.contains(userName) }
         if (userGroups.isEmpty()) {
             return UserRole.NONE
         }
@@ -221,7 +221,7 @@ class GroupResolver {
     fun getUsersByGroup(groupName: String): Collection<String> {
         var group = groupsByName.firstOrNull { it.groupName == groupName }
         if (group != null)
-            return group.userIds
+            return group.userNames
         return listOf()
     }
 
@@ -231,7 +231,7 @@ class GroupResolver {
         val newGroup = Group(
             groupName = groupName,
             globalRole = userRole,
-            userIds = users
+            userNames = users
         )
         if (idx >= 0) {
             current[idx] = newGroup
@@ -239,6 +239,31 @@ class GroupResolver {
             current.add(newGroup)
         }
         saveGroups(current)
+    }
+
+    fun getUserRoleByName(userName: String?): UserRight {
+        val now = LocalDateTime.now()
+        if (now.minusSeconds(15) > lastCheck) {
+            readConfig()
+        }
+        if (groupsByName.isEmpty()) {
+            return UserRole.NONE.userRight
+        }
+        val userGroups = groupsByName.filter { it.userNames.contains(userName) }
+        if (userGroups.isEmpty()) {
+            return UserRole.NONE.userRight
+        }
+        // Возвращаем максимальную роль из всех групп пользователя
+        // Приоритет: ADMIN > ONLY_RESTART > ONLY_METHODS > READER > NONE
+        return (userGroups.map { it.globalRole }.maxByOrNull {
+            when (it) {
+                UserRole.ADMIN -> 5
+                UserRole.ONLY_RESTART -> 4
+                UserRole.ONLY_METHODS -> 3
+                UserRole.READER -> 2
+                UserRole.NONE -> 1
+            }
+        } ?: UserRole.NONE).userRight
     }
 
     companion object {
