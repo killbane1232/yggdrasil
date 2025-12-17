@@ -7,7 +7,7 @@ import ru.arcam.yggdrasil.users.UserRole
 class GroupRightButtonView(
     private val groupName: String,
     private val role: UserRole
-) : Button("$groupName: ${role.name}", groupName) {
+) : Button("${groupName.removePrefix("G@")}: ${role.name}", groupName) {
     override fun onClick(menu: Menu) {
         when (menu) {
             is BranchRightsEditorMenu -> menu.nextLevel(groupName)

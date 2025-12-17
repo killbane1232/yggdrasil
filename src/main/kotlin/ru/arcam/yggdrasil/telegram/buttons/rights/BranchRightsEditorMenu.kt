@@ -42,10 +42,7 @@ class BranchRightsEditorMenu(
         val branch = storage[branchName] ?: return
         // Берём все существующие ключи G@*
         branch.allowedUsers.forEach { (key, right) ->
-            if (key.startsWith("G@")) {
-                val groupName = key.removePrefix("G@")
-                groupRoles[groupName] = roleFromRight(right)
-            }
+            groupRoles[key] = roleFromRight(right)
         }
     }
 
@@ -63,7 +60,7 @@ class BranchRightsEditorMenu(
     fun saveRights() {
         val rights: MutableMap<String, UserRight> = LinkedHashMap()
         groupRoles.forEach { (group, role) ->
-            rights["G@$group"] = role.userRight
+            rights[group] = role.userRight
         }
         val json = Json.encodeToString(rights)
         val message = "RIGHTS:NULL:$json"

@@ -4,6 +4,6 @@ import ru.arcam.yggdrasil.users.UserRight
 import ru.arcam.yggdrasil.users.UserRole
 
 internal fun roleFromRight(right: UserRight): UserRole {
-    return UserRole.entries.firstOrNull { it.userRight == right } ?: UserRole.NONE
+    return UserRole.entries.firstOrNull { it.userRight.equals(right) } ?: UserRole.NONE
 }
 

@@ -43,10 +43,7 @@ class LeafRightsEditorMenu(
         val branch = storage[branchName] ?: return
         val leaf = branch.leaves.firstOrNull { it.name == leafName } ?: return
         leaf.allowedUsers.forEach { (key, right) ->
-            if (key.startsWith("G@")) {
-                val groupName = key.removePrefix("G@")
-                groupRoles[groupName] = roleFromRight(right)
-            }
+            groupRoles[key] = roleFromRight(right)
         }
     }
 
