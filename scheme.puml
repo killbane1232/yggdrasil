@@ -1,0 +1,314 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+
+package "ru.arcam.yggdrasil.users" {
+    class User {
+        +String userName
+        +UserRole globalRole
+        +List<String> serverAllowedServers
+        +Map<String, List<String>> serverAllowedServices
+        +String userId
+    }
+    
+    enum UserRole {
+        NONE
+        READER
+        ONLY_METHODS
+        ONLY_RESTART
+        ADMIN
+        +UserRight userRight
+    }
+    
+    class UserRight {
+        +Boolean read
+        +Boolean write
+        +Boolean execute
+        +getMethods() : List<MenuButton>
+        +isAny() : Boolean
+    }
+    
+    class UserResolver {
+        -HashMap<String, User> userByName
+        -LocalDateTime lastCheck
+        -HashMap<Long, String> chatIdToUser
+        +getUserRoleByName(name: String, branchName: String?, leafName: String?) : UserRight
+        +getUserRoleByChatId(chatId: Long, branchName: String?, leafName: String?) : UserRight
+        -readConfig()
+        {static} +resolver : UserResolver
+    }
+}
+
+package "ru.arcam.yggdrasil.branch" {
+    class BranchInfo {
+        +String serviceName
+        +Map<String, UserRight> allowedUsers
+        +List<Leaf> leaves
+    }
+    
+    class BranchStorage {
+        -HashMap<String, BranchInfo> storage
+        -HashMap<String, LocalDateTime> storageCleaner
+        -Long timeoutMinutes
+        +cleanup()
+    }
+    
+    class BranchController {
+        +processMessage(branchInfo: BranchInfo?)
+        +cleanStorage()
+        {static} +branchStorage : BranchStorage
+    }
+    
+    class BranchInfoDao {
+    }
+}
+
+package "ru.arcam.yggdrasil.leaf" {
+    class Leaf {
+        +String name
+        +String status
+        +String attachedBranch
+        +Map<String, UserRight> allowedUsers
+        +List<LeafHook> hooks
+    }
+    
+    class LeafHook {
+        +String name
+        +Map<String, HookType> hookFields
+    }
+    
+    enum HookType {
+        STRING
+        NUMBER
+    }
+    
+    class LeafInfoDao {
+    }
+}
+
+package "ru.arcam.yggdrasil.telegram" {
+    class TelegramBot {
+        -TelegramConfiguration tgBotConfig
+        -List<ICommand> commandRunners
+        -StateResolver resolver
+        -UserResolver userResolver
+        +deployBot()
+        +getBotUsername() : String
+        +onUpdateReceived(update: Update?)
+        +sendMessage(chatId: Long, text: String)
+        +sendKeyBoard(chatId: Long, keyboard: KeyboardBuilder)
+    }
+    
+    class StateResolver {
+        -HashMap<Long, Stack<Menu>> menuData
+        -HashMap<Long, Int> lastMenuId
+        -HashMap<Long, Boolean> lastMenuChanged
+        -TelegramBot? bot
+        +notifyUpdateMenu(chatId: Long, newMenu: Menu)
+        +goBack(chatId: Long)
+        +peekOnClick(chatId: Long, data: String)
+        +peekOnMessage(chatId: Long, data: String) : Boolean
+        +peekMenu(chatId: Long) : KeyboardBuilder
+        {static} +resolver : StateResolver
+    }
+    
+    class TelegramConfiguration {
+    }
+}
+
+package "ru.arcam.yggdrasil.telegram.commands" {
+    abstract class ICommand {
+        {abstract} +runCommand(bot: TelegramBot, chatId: Long)
+        {abstract} +takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight)
+    }
+    
+    class MenuCommand {
+        +runCommand(bot: TelegramBot, chatId: Long)
+        +takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight)
+    }
+    
+    class LogsCommand {
+        +runCommand(bot: TelegramBot, chatId: Long)
+        +takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight)
+    }
+    
+    class AuditCommand {
+        +runCommand(bot: TelegramBot, chatId: Long)
+        +takeMenu(chatId: Long, resolver: StateResolver, leaf: Leaf, role: UserRight)
+    }
+}
+
+package "ru.arcam.yggdrasil.telegram.buttons" {
+    abstract class Menu {
+        #Long chatId
+        #List<Button> buttons
+        #String text
+        #StateResolver resolver
+        #CompletableFuture<String>? waiter
+        #String? waiterText
+        +onClick(callbackData: String)
+        +onMessage(text: String) : Boolean
+        +getMenu() : KeyboardBuilder
+        {abstract} +nextLevel(key: String)
+        +previousLevel()
+        +waitForMessage(message: String, onResult: (String) -> Unit)
+    }
+    
+    abstract class CarouselMenu {
+    }
+    
+    class Button {
+        +String text
+        +String callbackData
+        +getButton() : InlineKeyboardButton
+        +onClick(menu: Menu)
+    }
+    
+    class KeyboardBuilder {
+        +String text
+        +ArrayList<Button> buttons
+        +String? footerText
+        +build(hasBack: Boolean) : InlineKeyboardMarkup
+    }
+    
+    class BranchSelector {
+    }
+    
+    class LeafSelector {
+        -HashMap<String, Leaf> leaves
+        -ICommand command
+    }
+    
+    class MethodSelector {
+        -Leaf leaf
+    }
+    
+    class MenuSelector {
+        -Leaf leaf
+        -List<MenuButtonView> buttons
+    }
+    
+    class LogsSelector {
+        -Leaf leaf
+        -List<LogsButtonView> buttons
+    }
+    
+    class ResultMenu {
+    }
+    
+    class BranchButtonView {
+        -String serviceName
+    }
+    
+    class LeafButtonView {
+        -Leaf leaf
+    }
+    
+    class MethodButtonView {
+        -Leaf leaf
+        -LeafHook hook
+    }
+    
+    class MenuButtonView {
+    }
+    
+    class LogsButtonView {
+    }
+}
+
+package "ru.arcam.yggdrasil.ws" {
+    class WebSocketService {
+        -SimpMessagingTemplate messagingTemplate
+        -RequestBuffer requestBuffer
+        +processMessage(username: String, data: String) : String
+        +processMessageAsync(username: String, data: String, onResult: (String) -> Unit)
+        +callbackMessage(username: String, data: String)
+        +cleanupRequests()
+        {static} +wsService : WebSocketService
+    }
+    
+    class WebSocketConfig {
+        +registerStompEndpoints(registry: StompEndpointRegistry)
+        +configureMessageBroker(config: MessageBrokerRegistry)
+    }
+    
+    class RequestBuffer {
+        +addRequest(username: String) : CompletableFuture<String>
+        +handleResponse(username: String, data: String)
+        +cleanup()
+    }
+}
+
+package "ru.arcam.yggdrasil.utils" {
+    class ConfigReader {
+        {static} +loadConfig(filename: String) : File?
+    }
+    
+    class NameResolver {
+        {static} +resolveName(name: String) : String
+    }
+    
+    object AuditLogger {
+        +log(message: String)
+    }
+}
+
+' Relationships
+User --> UserRole : uses
+UserRole --> UserRight : contains
+UserResolver --> User : manages
+UserResolver --> UserRight : returns
+
+BranchInfo --> Leaf : contains
+BranchInfo --> UserRight : uses
+BranchStorage --> BranchInfo : stores
+BranchController --> BranchStorage : uses
+BranchController --> BranchInfo : processes
+
+Leaf --> LeafHook : contains
+Leaf --> UserRight : uses
+LeafHook --> HookType : uses
+
+TelegramBot --> UserResolver : uses
+TelegramBot --> StateResolver : uses
+TelegramBot --> ICommand : uses
+TelegramBot --> TelegramConfiguration : uses
+StateResolver --> Menu : manages
+
+ICommand <|-- MenuCommand
+ICommand <|-- LogsCommand
+ICommand <|-- AuditCommand
+
+Menu <|-- CarouselMenu
+CarouselMenu <|-- BranchSelector
+CarouselMenu <|-- LeafSelector
+CarouselMenu <|-- MethodSelector
+CarouselMenu <|-- MenuSelector
+CarouselMenu <|-- LogsSelector
+Menu <|-- ResultMenu
+
+Menu --> Button : contains
+Menu --> KeyboardBuilder : creates
+Button <|-- BranchButtonView
+Button <|-- LeafButtonView
+Button <|-- MethodButtonView
+Button <|-- MenuButtonView
+Button <|-- LogsButtonView
+
+LeafSelector --> Leaf : uses
+LeafSelector --> ICommand : uses
+MethodSelector --> Leaf : uses
+MenuSelector --> Leaf : uses
+LogsSelector --> Leaf : uses
+LeafButtonView --> Leaf : uses
+MethodButtonView --> Leaf : uses
+MethodButtonView --> LeafHook : uses
+
+WebSocketService --> RequestBuffer : uses
+WebSocketService --> SimpMessagingTemplate : uses
+
+UserResolver --> ConfigReader : uses
+
+@enduml
+
+

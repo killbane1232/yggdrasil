@@ -1,0 +1,39 @@
+@startuml
+!theme blueprint 
+
+Actor actor
+cloud telegram
+
+node "Local Gateway" {
+    package "Yggdrasil" {
+      component [Message broker]
+      component [ACL]
+      component [WSServer]
+      [Message broker] <-l-> telegram
+      [ACL] <-u-> [Message broker]
+      [Message broker] -r-> [WSServer]
+    }
+}
+
+node "Local Machine" {
+    package "YggdrasiulBranch" {
+      component [ACL reader]
+      component [Application Gateway]
+      component [IController]
+      component [WSClient]
+      [WSServer] <-r-> [WSClient]
+      [WSClient] -> [IController]
+      [WSClient] <-d- [ACL reader]
+      [IController] -d-> [Application Gateway]
+    }
+    node "Local Application"
+    node "Docker etc."
+    
+    [Application Gateway] -> [Local Application]
+    [IController] -> [Docker etc.]
+}
+
+actor -r-> telegram
+
+
+@enduml

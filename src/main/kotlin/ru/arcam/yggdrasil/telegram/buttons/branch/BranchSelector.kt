@@ -6,8 +6,10 @@ import ru.arcam.yggdrasil.leaf.Leaf
 import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
+import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 import ru.arcam.yggdrasil.telegram.commands.ICommand
+import ru.arcam.yggdrasil.telegram.buttons.rights.GroupEditorMenu
 
 class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, ArrayList(), "Select server") {
     var branches = HashMap<String, BranchInfo>()
@@ -20,6 +22,8 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
             if (role.isAny())
                 buttons = buttons.plus(BranchButtonView(i))
         }
+        // Кнопка управления группами/пользователями в конце меню
+        buttons = buttons.plus(BranchGroupsEditButton())
         return super.getMenu()
     }
 
@@ -33,3 +37,10 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
         resolver.notifyUpdateMenu(chatId, LeafSelector(chatId, leaves, command))
     }
 }
+
+class BranchGroupsEditButton : Button("⚙ Группы и пользователи", "EDIT_GROUPS") {
+    override fun onClick(menu: ru.arcam.yggdrasil.telegram.buttons.Menu) {
+        menu.resolver.notifyUpdateMenu(menu.chatId, GroupEditorMenu(menu.chatId))
+    }
+}
+
