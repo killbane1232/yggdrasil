@@ -26,7 +26,6 @@ class TelegramBot(
     private var commandRunners : List<ICommand>,
 ) : TelegramLongPollingBot(tgBotConfig.botToken) {
     var resolver = StateResolver.resolver
-    private val userResolver: UserResolver = UserResolver.resolver
     private val groupResolver: GroupResolver = GroupResolver.resolver
     val logger = LoggerFactory.getLogger(TelegramBot::class.java)
 
@@ -53,12 +52,11 @@ class TelegramBot(
             val chatId = update.message.chatId
             val messageText = update.message.text
             val userName = update.message.from.userName
-            val role = userResolver.getUserRoleByName(userName)
-            val role2 = groupResolver.getUserRoleByName(userName)
-            if (!role.isAny() && !role2.isAny()) {
+            val role = groupResolver.getUserRoleByName(userName)
+            if (!role.isAny()) {
                 return
             }
-            userResolver.chatIdToUser[chatId] = userName
+            groupResolver.chatIdToUser[chatId] = userName
 
             val commandRunner = commandRunners.firstOrNull {
                 it.javaClass.annotations.any {
