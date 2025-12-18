@@ -56,7 +56,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
     }
 
     fun editGroupRights(groupName: String) {
-        resolver.notifyUpdateMenu(chatId, ResultMenu(chatId, "$groupName saved"))
+        resolver.notifyUpdateMenu(chatId, RoleSelectorMenu(chatId, groupName, this))
     }
 
     fun setRole(role: UserRole) {
@@ -67,6 +67,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
 
     fun saveGroup() {
         groupResolver.updateGroup(groupName, userRole!!, users!!)
+        resolver.notifyUpdateMenu(chatId, ResultMenu(chatId, "$groupName saved"))
     }
 }
 
