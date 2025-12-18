@@ -1,5 +1,6 @@
 package ru.arcam.yggdrasil.users
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import kotlinx.serialization.Serializable
 import lombok.Builder
@@ -14,7 +15,9 @@ data class UserRight(
     @JsonProperty
     val write: Boolean,
     @JsonProperty
-    val execute: Boolean
+    val execute: Boolean,
+    @JsonIgnore
+    val admin: Boolean = false
 ) {
     fun getMethods(): List<MenuButton> {
         val methods = ArrayList<MenuButton>()

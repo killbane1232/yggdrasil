@@ -3,7 +3,6 @@ package ru.arcam.yggdrasil.telegram.buttons.branch
 import ru.arcam.yggdrasil.branch.BranchController
 import ru.arcam.yggdrasil.branch.BranchInfo
 import ru.arcam.yggdrasil.leaf.Leaf
-import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.Button
@@ -25,8 +24,8 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
                 buttons = buttons.plus(BranchButtonView(i))
         }
         // Кнопка управления группами/пользователями в конце меню (только для ADMIN)
-        val globalRole = GroupResolver.resolver.getUserRoleEnumByChatId(chatId)
-        if (globalRole == UserRole.ADMIN) {
+        val globalRole = GroupResolver.resolver.getUserRoleByChatId(chatId)
+        if (globalRole.admin) {
             buttons = buttons.plus(BranchGroupsEditButton())
         }
         return super.getMenu()

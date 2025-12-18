@@ -6,6 +6,7 @@ import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.telegram.buttons.result.ResultMenu
 import ru.arcam.yggdrasil.telegram.buttons.rights.branch.LeafRightsEditorMenu
+import ru.arcam.yggdrasil.users.GroupResolver
 
 
 class MenuSelector(chatId: Long, val leaf: Leaf, buttons: List<MenuButtonView>) :
@@ -14,7 +15,10 @@ class MenuSelector(chatId: Long, val leaf: Leaf, buttons: List<MenuButtonView>) 
     override fun getMenu(): ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder {
         // Добавляем кнопку редактирования прав для Leaf в конец меню (если ещё не добавлена)
         if (!buttons.any { it is LeafRightsEntryFromMenuButton }) {
-            buttons = buttons.plus(LeafRightsEntryFromMenuButton())
+            val role = GroupResolver.resolver.getUserRoleByChatId(chatId, leaf.attachedBranch, leaf.name)
+            if (role.admin) {
+                buttons = buttons.plus(LeafRightsEntryFromMenuButton())
+            }
         }
         return super.getMenu()
     }

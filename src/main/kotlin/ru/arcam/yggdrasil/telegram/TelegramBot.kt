@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.arcam.yggdrasil.telegram.StateResolver
 import ru.arcam.yggdrasil.telegram.TelegramConfiguration
-import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.commands.ICommand
 import ru.arcam.yggdrasil.users.GroupResolver

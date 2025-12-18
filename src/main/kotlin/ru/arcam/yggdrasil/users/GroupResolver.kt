@@ -113,12 +113,14 @@ class GroupResolver {
         var read = false
         var write = false
         var execute = false
+        var admin = false
         rights.forEach {
             if (it.read) read = true
             if (it.write) write = true
             if (it.execute) execute = true
+            if (it.admin) admin = true
         }
-        return UserRight(read, write, execute)
+        return UserRight(read, write, execute, admin)
     }
 
     @Synchronized
@@ -163,7 +165,8 @@ class GroupResolver {
             return UserRight(
                 role.read || servRole.read,
                 role.write || servRole.write,
-                role.execute || servRole.execute
+                role.execute || servRole.execute,
+                role.admin || servRole.admin
             )
 
         // Права на уровне лифа для всех групп пользователя:
@@ -181,40 +184,14 @@ class GroupResolver {
         return UserRight(
             role.read || servRole.read && leafRole.read,
             role.write || servRole.write && leafRole.write,
-            role.execute || servRole.execute && leafRole.execute
+            role.execute || servRole.execute && leafRole.execute,
+            role.admin || servRole.admin
         )
     }
 
     @Synchronized
     fun getUserRoleByChatId(chatId: Long, branchName: String? = null, leafName: String? = null): UserRight {
         return getGroupRoleByName(chatIdToUser[chatId]!!, branchName, leafName)
-    }
-
-    @Synchronized
-    fun getUserRoleEnumByChatId(chatId: Long): UserRole {
-        val now = LocalDateTime.now()
-        if (now.minusSeconds(15) > lastCheck) {
-            readConfig()
-        }
-        val userName = chatIdToUser[chatId] ?: return UserRole.NONE
-        if (groupsByName.isEmpty()) {
-            return UserRole.ADMIN
-        }
-        val userGroups = groupsByName.filter { it.userNames.contains(userName) }
-        if (userGroups.isEmpty()) {
-            return UserRole.NONE
-        }
-        // Возвращаем максимальную роль из всех групп пользователя
-        // Приоритет: ADMIN > ONLY_RESTART > ONLY_METHODS > READER > NONE
-        return userGroups.map { it.globalRole }.maxByOrNull {
-            when (it) {
-                UserRole.ADMIN -> 5
-                UserRole.ONLY_RESTART -> 4
-                UserRole.ONLY_METHODS -> 3
-                UserRole.READER -> 2
-                UserRole.NONE -> 1
-            }
-        } ?: UserRole.NONE
     }
 
     @Synchronized

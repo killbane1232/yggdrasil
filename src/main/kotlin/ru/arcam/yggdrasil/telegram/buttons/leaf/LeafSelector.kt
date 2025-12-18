@@ -1,7 +1,6 @@
 package ru.arcam.yggdrasil.telegram.buttons.leaf
 
 import ru.arcam.yggdrasil.leaf.Leaf
-import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.commands.ICommand
@@ -21,7 +20,10 @@ class LeafSelector(chatId: Long, private val leaves: HashMap<String, Leaf> = Has
         if (leaves.isNotEmpty()) {
             val branchName = leaves.values.first().attachedBranch
             if (!buttons.any { it is BranchRightsEntryFromLeafButton }) {
-                buttons = buttons.plus(BranchRightsEntryFromLeafButton(branchName))
+                val role = GroupResolver.resolver.getUserRoleByChatId(chatId, leaves.values.first().attachedBranch)
+                if (role.admin) {
+                    buttons = buttons.plus(BranchRightsEntryFromLeafButton(branchName))
+                }
             }
         }
         return super.getMenu()

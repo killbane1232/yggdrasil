@@ -5,5 +5,5 @@ enum class UserRole(val userRight: UserRight) {
     READER (UserRight(true, false, false)),
     ONLY_METHODS (UserRight(true, false, true)),
     ONLY_RESTART (UserRight(true, true, false)),
-    ADMIN (UserRight(true, true, true))
+    ADMIN (UserRight(true, true, true, true))
 }
