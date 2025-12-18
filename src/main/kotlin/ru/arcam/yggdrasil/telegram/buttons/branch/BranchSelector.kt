@@ -20,14 +20,13 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
         buttons = ArrayList()
         branches = BranchController.branchStorage.storage
         for(i in branches.keys) {
-            val role = UserResolver.resolver.getUserRoleByChatId(chatId, i)
+            val role = GroupResolver.resolver.getUserRoleByChatId(chatId, i)
             if (role.isAny())
                 buttons = buttons.plus(BranchButtonView(i))
         }
         // Кнопка управления группами/пользователями в конце меню (только для ADMIN)
         val globalRole = GroupResolver.resolver.getUserRoleEnumByChatId(chatId)
-        val globalRole2 = UserResolver.resolver.getUserRoleEnumByChatId(chatId)
-        if (globalRole == UserRole.ADMIN || globalRole2 == UserRole.ADMIN) {
+        if (globalRole == UserRole.ADMIN) {
             buttons = buttons.plus(BranchGroupsEditButton())
         }
         return super.getMenu()
@@ -36,7 +35,7 @@ class BranchSelector(chatId: Long, val command: ICommand): CarouselMenu(chatId, 
     override fun nextLevel(key: String) {
         val leaves = HashMap<String, Leaf>()
         for (leaf in branches[key]!!.leaves) {
-            val role = UserResolver.resolver.getUserRoleByChatId(chatId, key, leaf.name)
+            val role = GroupResolver.resolver.getUserRoleByChatId(chatId, key, leaf.name)
             if (role.isAny())
                 leaves[leaf.name] = leaf
         }

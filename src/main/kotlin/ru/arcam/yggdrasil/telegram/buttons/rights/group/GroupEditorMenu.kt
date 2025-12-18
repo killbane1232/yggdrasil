@@ -46,11 +46,15 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
             "Текущий список:\n" +
             "```\n${groupResolver.getUsersByGroup(groupName).joinToString(",")}\n```"
         ) { text ->
-            val users = text.split(',')
+            if (text == "BACKER") {
+                resolver.lastMenuChanged[chatId] = true
+                resolver.bot?.sendKeyBoard(chatId)
+            }
+            users = text.split(',')
                 .map { it.trim() }
                 .filter { it.isNotEmpty() }
                 .toSet()
-            groupResolver.updateGroupUsers(groupName, users)
+            groupResolver.updateGroupUsers(groupName, users!!)
             resolver.lastMenuChanged[chatId] = true
             resolver.bot?.sendKeyBoard(chatId)
         }

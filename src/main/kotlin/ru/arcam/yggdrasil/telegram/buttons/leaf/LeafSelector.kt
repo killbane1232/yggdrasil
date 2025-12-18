@@ -6,12 +6,13 @@ import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.commands.ICommand
 import ru.arcam.yggdrasil.telegram.buttons.rights.branch.BranchRightsEditorMenu
+import ru.arcam.yggdrasil.users.GroupResolver
 
 class LeafSelector(chatId: Long, private val leaves: HashMap<String, Leaf> = HashMap(), val command: ICommand) :
     CarouselMenu(chatId, buttons = leaves.map { LeafButtonView(it.value) }, "Select service on ${leaves.values.first().attachedBranch}") {
     override fun nextLevel(key: String) {
         val leaf = leaves[key]!!
-        val role = UserResolver.resolver.getUserRoleByChatId(chatId, leaf.attachedBranch, leaf.name)
+        val role = GroupResolver.resolver.getUserRoleByChatId(chatId, leaf.attachedBranch, leaf.name)
         command.takeMenu(chatId, resolver, leaf, role)
     }
 
