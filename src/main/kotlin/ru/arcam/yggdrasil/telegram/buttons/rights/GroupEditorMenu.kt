@@ -16,18 +16,20 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
     CarouselMenu(chatId, buttons = listOf(), text = "Выберите группу для редактирования") {
 
     private val groupResolver = GroupResolver.resolver
-    var userRole: UserRole = UserRole.NONE
-    private var users: Set<String> = emptySet()
+    var userRole: UserRole? = null
+    private var users: Set<String>? = null
 
 
     override fun getMenu(): KeyboardBuilder {
         val groups = groupResolver.getAllGroups()
         val newButtons = ArrayList<Button>()
         val group = groups.first{it.groupName == groupName}
-        userRole = group.globalRole
-        users = group.userNames
-        newButtons.add(GroupEditButtonView(groupName, users.size))
-        newButtons.add(GroupChangeRightsButtonView(groupName, userRole))
+        if (userRole == null)
+            userRole = group.globalRole
+        if (users == null)
+            users = group.userNames
+        newButtons.add(GroupEditButtonView(groupName, users!!.size))
+        newButtons.add(GroupChangeRightsButtonView(groupName, userRole!!))
         newButtons.add(GroupSaveButtonView())
         buttons = newButtons
         return super.getMenu()
@@ -64,7 +66,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
     }
 
     fun saveGroup() {
-        groupResolver.updateGroup(groupName, userRole, users)
+        groupResolver.updateGroup(groupName, userRole!!, users!!)
     }
 }
 
