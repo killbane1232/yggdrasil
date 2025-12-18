@@ -4,6 +4,7 @@ import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.telegram.buttons.Button
+import ru.arcam.yggdrasil.telegram.buttons.result.ResultMenu
 import ru.arcam.yggdrasil.users.GroupResolver
 import ru.arcam.yggdrasil.users.UserRole
 
@@ -53,7 +54,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
     }
 
     fun editGroupRights(groupName: String) {
-        resolver.notifyUpdateMenu(chatId, RoleSelectorMenu(chatId, groupName, this))
+        resolver.notifyUpdateMenu(chatId, ResultMenu(chatId, "$groupName saved"))
     }
 
     fun setRole(role: UserRole) {
