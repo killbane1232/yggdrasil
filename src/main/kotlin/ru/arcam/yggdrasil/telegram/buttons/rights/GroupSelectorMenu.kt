@@ -39,6 +39,7 @@ class GroupSelectorMenu(chatId: Long) :
             "Введите название группы для создания"
         ) { line ->
             groupResolver.addGroup(line)
+            resolver.lastMenuChanged[chatId] = true
             resolver.bot?.sendKeyBoard(chatId)
         }
     }

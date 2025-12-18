@@ -47,6 +47,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
                 .filter { it.isNotEmpty() }
                 .toSet()
             groupResolver.updateGroupUsers(groupName, users)
+            resolver.lastMenuChanged[chatId] = true
             resolver.bot?.sendKeyBoard(chatId)
         }
     }
@@ -58,7 +59,7 @@ class GroupEditorMenu(chatId: Long, val groupName: String) :
     fun setRole(role: UserRole) {
         userRole = role
         resolver.lastMenuChanged[chatId] = true
-        resolver.notifyUpdateMenu(chatId, this)
+        resolver.goBack(chatId)
     }
 
     fun saveGroup() {
