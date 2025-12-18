@@ -8,7 +8,7 @@ abstract class Menu(var chatId: Long, var buttons: List<Button>, val text: Strin
     var resolver = StateResolver.resolver
     var waiter: CompletableFuture<String>? = null
     var waiterText: String? = null
-    private val NONE = "NONE"
+    private val NONE = "BACKER"
 
     open fun onClick(callbackData: String) {
         if (callbackData == NONE) {

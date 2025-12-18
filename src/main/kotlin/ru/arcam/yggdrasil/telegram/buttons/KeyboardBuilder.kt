@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
 class KeyboardBuilder(val text: String, val buttons: ArrayList<Button>, val footerText: String? = null) {
-    private val NONE = "NONE"
+    private val NONE = "BACKER"
     private val NEXT = "NEXT"
     private val PREVIOUS = "PREVIOUS"
 
