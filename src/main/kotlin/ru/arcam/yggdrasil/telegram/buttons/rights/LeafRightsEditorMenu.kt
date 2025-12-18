@@ -6,6 +6,7 @@ import ru.arcam.yggdrasil.branch.BranchController
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
+import ru.arcam.yggdrasil.users.GroupResolver
 import ru.arcam.yggdrasil.users.UserRight
 import ru.arcam.yggdrasil.users.UserRole
 import ru.arcam.yggdrasil.utils.AuditLogger
@@ -39,6 +40,11 @@ class LeafRightsEditorMenu(
     }
 
     private fun initFromLeaf() {
+        val resolver = GroupResolver.resolver.getAllGroups()
+
+        resolver.forEach {
+            groupRoles[it.groupName] = it.globalRole
+        }
         val storage = BranchController.branchStorage.storage
         val branch = storage[branchName] ?: return
         val leaf = branch.leaves.firstOrNull { it.name == leafName } ?: return
