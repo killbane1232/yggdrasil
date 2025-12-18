@@ -5,7 +5,7 @@ import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.telegram.buttons.result.ResultMenu
-import ru.arcam.yggdrasil.telegram.buttons.rights.LeafRightsEditorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.branch.LeafRightsEditorMenu
 
 
 class MenuSelector(chatId: Long, val leaf: Leaf, buttons: List<MenuButtonView>) :

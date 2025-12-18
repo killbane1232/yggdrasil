@@ -1,10 +1,11 @@
-package ru.arcam.yggdrasil.telegram.buttons.rights
+package ru.arcam.yggdrasil.telegram.buttons.rights.group
 
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.Menu
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.result.ResultMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.role.RoleSelectorMenu
 import ru.arcam.yggdrasil.users.GroupResolver
 import ru.arcam.yggdrasil.users.UserRole
 

@@ -9,7 +9,7 @@ import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.leaf.LeafSelector
 import ru.arcam.yggdrasil.telegram.commands.ICommand
-import ru.arcam.yggdrasil.telegram.buttons.rights.GroupSelectorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.group.GroupSelectorMenu
 import ru.arcam.yggdrasil.users.GroupResolver
 import ru.arcam.yggdrasil.users.UserRole
 

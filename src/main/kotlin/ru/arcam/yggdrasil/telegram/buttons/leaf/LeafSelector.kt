@@ -5,7 +5,7 @@ import ru.arcam.yggdrasil.telegram.UserResolver
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.commands.ICommand
-import ru.arcam.yggdrasil.telegram.buttons.rights.BranchRightsEditorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.branch.BranchRightsEditorMenu
 
 class LeafSelector(chatId: Long, private val leaves: HashMap<String, Leaf> = HashMap(), val command: ICommand) :
     CarouselMenu(chatId, buttons = leaves.map { LeafButtonView(it.value) }, "Select service on ${leaves.values.first().attachedBranch}") {

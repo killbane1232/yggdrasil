@@ -1,4 +1,4 @@
-package ru.arcam.yggdrasil.telegram.buttons.rights
+package ru.arcam.yggdrasil.telegram.buttons.rights.branch
 
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu

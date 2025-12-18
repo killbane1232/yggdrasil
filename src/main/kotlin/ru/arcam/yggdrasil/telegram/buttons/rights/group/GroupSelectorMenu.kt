@@ -1,4 +1,4 @@
-package ru.arcam.yggdrasil.telegram.buttons.rights
+package ru.arcam.yggdrasil.telegram.buttons.rights.group
 
 import ru.arcam.yggdrasil.telegram.buttons.CarouselMenu
 import ru.arcam.yggdrasil.telegram.buttons.KeyboardBuilder

@@ -1,7 +1,10 @@
-package ru.arcam.yggdrasil.telegram.buttons.rights
+package ru.arcam.yggdrasil.telegram.buttons.rights.role
 
 import ru.arcam.yggdrasil.telegram.buttons.Button
 import ru.arcam.yggdrasil.telegram.buttons.Menu
+import ru.arcam.yggdrasil.telegram.buttons.rights.group.GroupEditorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.branch.BranchRightsEditorMenu
+import ru.arcam.yggdrasil.telegram.buttons.rights.branch.LeafRightsEditorMenu
 import ru.arcam.yggdrasil.users.UserRole
 
 class RoleButtonView(
